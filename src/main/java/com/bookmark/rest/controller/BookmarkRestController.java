@@ -37,4 +37,9 @@ public class BookmarkRestController {
     public void deleteBookmark(@PathVariable Long bookmarkUid){
         bookmarkService.deleteBookmark(bookmarkUid);
     }
+
+    @GetMapping("/search/bookmarks/{contents}")
+    public List<Bookmark> findAllBookmarks(@PathVariable String contents) {
+        return bookmarkService.findAllBookmarks(contents);
+    }
 }

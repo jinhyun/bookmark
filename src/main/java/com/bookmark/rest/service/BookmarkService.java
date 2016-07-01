@@ -37,4 +37,10 @@ public class BookmarkService {
     public void deleteBookmark(Long bookmarkUid) {
         bookmarkRepository.delete(bookmarkUid);
     }
+
+    public List<Bookmark> findAllBookmarks(String contents) {
+        String url = contents;
+        String description = contents;
+        return bookmarkRepository.findByUrlContainingOrDescriptionContaining(url, description);
+    }
 }

@@ -132,8 +132,41 @@ var bookmarks = function () {
     });
   };
 
+  var searchBookmark = function (_bindHbsBookmarks) {
+    var inputSearch = $("#input_search").val();
+
+    if (inputSearch == '') {
+      bookmarks.readBookmarks();
+
+    } else {
+      $.ajax({
+        url: "/api/search/bookmarks/" + inputSearch,
+        type: "GET",
+        success: function (data) {
+          var bookmarks, template, html;
+          bookmarks = { "bookmarks" : data };
+          template = Handlebars.compile($("#hbs_bookmarks").html());
+          html = template(bookmarks);
+
+          $(".bookmarks_contents").html(html);
+
+          _bindHbsBookmarks();
+        },
+        error: function () {
+        }
+      });
+    }
+  };
+
+  var bindHeader = function () {
+    $("#btn_search_bookmark").click(function () {
+      searchBookmark(bindHbsBookmarks);
+    });
+  };
+
   return {
     bind: function() {
+      bindHeader();
       bindModal();
       bindAddBookmark();
     },
