@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>bookmarks</title>
+
+    <style rel="stylesheet">
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%; /* Could be more or less, depending on screen size */
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+
+    <script src="webjars/handlebars/4.0.5/handlebars.js"></script>
+    <script src="webjars/jquery/3.0.0/jquery.js"></script>
+    <script src="webjars/jquery-dateFormat/1.0.2/jquery-dateFormat.js"></script>
+</head>
+<body>
+    <h3>bookmarks</h3>
+    <div>
+        <span> url: </span><input type="text" id="input_url"/>
+        <span> desc: </span><input type="text" id="input_desc"/>
+        <button type="button" id="btn_addBookmark">add</button>
+    </div>
+    <div id="bookmarks_contents"></div>
+
+    <div id="modal_update_bookmark" class="modal">
+        <div class="modal-content">
+            <span class="close">x</span>
+            <p id="modal_content"></p>
+        </div>
+    </div>
+
+    <script type="text/x-handlebars-template" id="hbs_update_bookmark">
+        <div>
+            <span> url: </span><input type="text" id="input_update_url" value="{{url}}"/>
+            <span> desc: </span><input type="text" id="input_update_desc" value="{{description}}"/>
+            <button type="button" id="btn_updateBookmark" data-bookmark-uid="{{uid}}">update</button>
+        </div>
+    </script>
+
+    <script type="text/x-handlebars-template" id="hbs_bookmarks">
+        {{#bookmarks}}
+        <div>
+            <a href="{{url}}">
+                {{#if description}}
+                    {{description}}
+                {{else}}
+                    {{url}}
+                {{/if}}
+            </a>
+            | {{dateformat regDate}}
+            | <a href="#" class="btn_update_bookmark" data-bookmark-uid="{{uid}}">update</a>
+            | <a href="#" class="btn_delete_bookmark" data-bookmark-uid="{{uid}}">delete</a>
+        </div>
+        {{/bookmarks}}
+    </script>
+
+    <script>
+        Handlebars.registerHelper('dateformat', function(date) {
+            return $.format.date(date, "yyyy/MM/dd HH:mm:ss");
+        });
+    </script>
+
+    <script>
+        (function(){
+            readBookmarks();
+        })();
+
+        $("#btn_addBookmark").click(function() {
+            var bookmark = {
+                url: $("#input_url").val(),
+                description: $("#input_desc").val(),
+                regDate: new Date()
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "/api/bookmarks",
+                data: JSON.stringify(bookmark),
+                contentType: "application/json",
+                success: function(data) {
+                    readBookmarks();
+                    clearInputData();
+                },
+                error: function() {
+                    console.log("error");
+                }
+            })
+        });
+
+        function clearInputData() {
+            $("#input_url").val("");
+            $("#input_desc").val("");
+        }
+
+        function readBookmarks() {
+            $.ajax({
+                type: "GET",
+                url: "/api/bookmarks",
+                success: function(data) {
+                    var bookmarks = { "bookmarks" : data };
+                    var template = Handlebars.compile($("#hbs_bookmarks").html());
+                    var html = template(bookmarks);
+                    $("#bookmarks_contents").html(html);
+
+                    bind();
+                },
+                error: function() {
+
+                }
+            });
+        }
+
+        function readBookmark(el) {
+            var bookmarkUid = $(el).data("bookmarkUid");
+            $.ajax({
+                type: "GET",
+                url: "/api/bookmarks/" + bookmarkUid,
+                success: function(data) {
+                    var template = Handlebars.compile($("#hbs_update_bookmark").html());
+                    var html = template(data);
+
+                    $("#modal_content").html(html);
+
+                    $("#btn_updateBookmark").click(function() {
+                        updateBookmark(this);
+                    });
+
+                    $("#modal_update_bookmark").show();
+                },
+                error: function() {
+
+                }
+            });
+        }
+
+        function deleteBookmark(el) {
+            var bookmarkUid = $(el).data("bookmarkUid");
+            $.ajax({
+                type: "DELETE",
+                url: "/api/bookmarks/" + bookmarkUid,
+                success: function(data) {
+                    readBookmarks();
+                },
+                error: function() {
+
+                }
+            });
+        }
+
+        function updateBookmark(el) {
+            var bookmark = {
+                uid: $(el).data("bookmarkUid"),
+                url: $("#input_update_url").val(),
+                description: $("#input_update_desc").val()
+            };
+
+            $.ajax({
+                type: "PATCH",
+                url: "/api/bookmarks",
+                data: JSON.stringify(bookmark),
+                contentType: "application/json",
+                success: function() {
+                    readBookmarks();
+                    $("#modal_update_bookmark").hide();
+                },
+                error: function() {
+
+                }
+            })
+        }
+
+        function bind() {
+            $(".btn_update_bookmark").click(function() {
+                readBookmark(this);
+            });
+
+            $(".btn_delete_bookmark").click(function() {
+                deleteBookmark(this);
+            });
+
+            $(".close").click (function() {
+                $("#modal_update_bookmark").hide();
+            });
+
+            window.onclick = function (event) {
+                if (event.target == $("#modal_update_bookmark")[0]) {
+                    $("#modal_update_bookmark").hide();
+                }
+            };
+        }
+    </script>
+</body>
+</html>
