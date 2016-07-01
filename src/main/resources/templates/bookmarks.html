@@ -5,7 +5,25 @@
     <title>bookmarks</title>
 
     <style rel="stylesheet">
-        /* The Modal (background) */
+        .container {
+            margin: 15px 10px 10px 10px;
+        }
+
+        .header {}
+
+        .left {
+            float: left;
+            margin-right: 20px;
+        }
+
+        .add_bookmark {
+            margin-top: 10px;
+        }
+
+        .bookmarks_contents {
+            margin-top: 20px;
+        }
+
         .modal {
             display: none; /* Hidden by default */
             position: fixed; /* Stay in place */
@@ -19,8 +37,7 @@
             background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
         }
 
-        /* Modal Content/Box */
-        .modal-content {
+        .modal_content {
             background-color: #fefefe;
             margin: 15% auto; /* 15% from the top and centered */
             padding: 20px;
@@ -28,16 +45,15 @@
             width: 50%; /* Could be more or less, depending on screen size */
         }
 
-        /* The Close Button */
-        .close {
+        .modal_close {
             color: #aaa;
             float: right;
             font-size: 28px;
             font-weight: bold;
         }
 
-        .close:hover,
-        .close:focus {
+        .modal_close:hover,
+        .modal_close:focus {
             color: black;
             text-decoration: none;
             cursor: pointer;
@@ -49,22 +65,38 @@
     <script src="webjars/jquery-dateFormat/1.0.2/jquery-dateFormat.js"></script>
 </head>
 <body>
-    <h3>bookmarks</h3>
-    <div>
-        <span> url: </span><input type="text" id="input_url"/>
-        <span> desc: </span><input type="text" id="input_desc"/>
-        <button type="button" id="btn_addBookmark">add</button>
-    </div>
-    <div id="bookmarks_contents"></div>
+    <div class="container">
+        <header class="header">
+            <div class="left">
+                <span>bookmarks</span>
+            </div>
+            <div class="center">
+                <input type="text" placeholder="search a bookmark"/>
+                <button type="button">search</button>
+            </div>
+        </header>
 
-    <div id="modal_update_bookmark" class="modal">
-        <div class="modal-content">
-            <span class="close">x</span>
-            <p id="modal_content"></p>
-        </div>
+        <section>
+            <div class="add_bookmark">
+                <input type="text" id="input_url" placeholder="Input a url"/>
+                <input type="text" id="input_desc" placeholder="Input a description"/>
+                <button type="button" id="btn_add_bookmark">add</button>
+            </div>
+        </section>
+
+        <section class="bookmarks_contents"></section>
+
+        <section>
+            <div class="modal">
+                <div class="modal_content">
+                    <span class="modal_close">x</span>
+                    <p class="modal_detail_content"></p>
+                </div>
+            </div>
+        </section>
     </div>
 
-    <script type="text/x-handlebars-template" id="hbs_update_bookmark">
+    <script type="text/x-handlebars-template" id="hbs_bookmark_edit">
         <div>
             <span> url: </span><input type="text" id="input_update_url" value="{{url}}"/>
             <span> desc: </span><input type="text" id="input_update_desc" value="{{description}}"/>
@@ -74,7 +106,7 @@
 
     <script type="text/x-handlebars-template" id="hbs_bookmarks">
         {{#bookmarks}}
-        <div>
+        <article>
             <a href="{{url}}">
                 {{#if description}}
                     {{description}}
@@ -85,7 +117,7 @@
             | {{dateformat regDate}}
             | <a href="#" class="btn_update_bookmark" data-bookmark-uid="{{uid}}">update</a>
             | <a href="#" class="btn_delete_bookmark" data-bookmark-uid="{{uid}}">delete</a>
-        </div>
+        </article>
         {{/bookmarks}}
     </script>
 
@@ -100,7 +132,7 @@
             readBookmarks();
         })();
 
-        $("#btn_addBookmark").click(function() {
+        $("#btn_add_bookmark").click(function() {
             var bookmark = {
                 url: $("#input_url").val(),
                 description: $("#input_desc").val(),
@@ -135,7 +167,7 @@
                     var bookmarks = { "bookmarks" : data };
                     var template = Handlebars.compile($("#hbs_bookmarks").html());
                     var html = template(bookmarks);
-                    $("#bookmarks_contents").html(html);
+                    $(".bookmarks_contents").html(html);
 
                     bind();
                 },
@@ -151,16 +183,16 @@
                 type: "GET",
                 url: "/api/bookmarks/" + bookmarkUid,
                 success: function(data) {
-                    var template = Handlebars.compile($("#hbs_update_bookmark").html());
+                    var template = Handlebars.compile($("#hbs_bookmark_edit").html());
                     var html = template(data);
 
-                    $("#modal_content").html(html);
+                    $(".modal_detail_content").html(html);
 
                     $("#btn_updateBookmark").click(function() {
                         updateBookmark(this);
                     });
 
-                    $("#modal_update_bookmark").show();
+                    $(".modal").show();
                 },
                 error: function() {
 
@@ -196,7 +228,7 @@
                 contentType: "application/json",
                 success: function() {
                     readBookmarks();
-                    $("#modal_update_bookmark").hide();
+                    $(".modal").hide();
                 },
                 error: function() {
 
@@ -213,13 +245,13 @@
                 deleteBookmark(this);
             });
 
-            $(".close").click (function() {
-                $("#modal_update_bookmark").hide();
+            $(".modal_close").click (function() {
+                $(".modal").hide();
             });
 
             window.onclick = function (event) {
-                if (event.target == $("#modal_update_bookmark")[0]) {
-                    $("#modal_update_bookmark").hide();
+                if (event.target == $(".modal")[0]) {
+                    $(".modal").hide();
                 }
             };
         }
