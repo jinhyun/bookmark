@@ -1,37 +1,42 @@
 var bookmarks = function () {
+  var showBookmarks = function (data, _bindHbsBookmarks) {
+    var bookmarks, template, html;
+
+    bookmarks = { "bookmarks" : data };
+    template = Handlebars.compile($("#hbs_bookmarks").html());
+    html = template(bookmarks);
+
+    $(".bookmarks_contents").html(html);
+
+    // TODO: refactor
+    var t = $(".bookmark_taggle");
+    for (var i = 0; i < t.length; i++) {
+      var tagsList = data[i].tagsList;
+      var tagsData = [];
+
+      for (var j = 0; j < tagsList.length; j++) {
+        var tagsName = tagsList[j].name;
+        tagsData.push(tagsName);
+      }
+
+      new Taggle(t[i], {
+        tags: tagsData
+      });
+
+      $(".taggle_placeholder").hide();    // Temp
+      $(".taggle_input").hide();          // Temp
+    }
+
+    _bindHbsBookmarks();
+  };
+
+
   var readBookmarks = function (_bindHbsBookmarks) {
     $.ajax({
       type: "GET",
       url: "/api/bookmarks",
       success: function(data) {
-        var bookmarks, template, html;
-
-        bookmarks = { "bookmarks" : data };
-        template = Handlebars.compile($("#hbs_bookmarks").html());
-        html = template(bookmarks);
-
-        $(".bookmarks_contents").html(html);
-
-        // TODO: refactor
-        var t = $(".bookmark_taggle");
-        for (var i = 0; i < t.length; i++) {
-          var tagsList = data[i].tagsList;
-          var tagsData = [];
-
-          for (var j = 0; j < tagsList.length; j++) {
-            var tagsName = tagsList[j].name;
-            tagsData.push(tagsName);
-          }
-
-          new Taggle(t[i], {
-            tags: tagsData
-          });
-
-          $(".taggle_placeholder").hide();    // Temp
-          $(".taggle_input").hide();          // Temp
-        }
-
-        _bindHbsBookmarks();
+        showBookmarks(data, _bindHbsBookmarks);
       },
       error: function() {
 
@@ -163,15 +168,7 @@ var bookmarks = function () {
         url: "/api/search/bookmarks/" + inputSearch,
         type: "GET",
         success: function (data) {
-          var bookmarks, template, html;
-
-          bookmarks = { "bookmarks" : data };
-          template = Handlebars.compile($("#hbs_bookmarks").html());
-          html = template(bookmarks);
-
-          $(".bookmarks_contents").html(html);
-
-          _bindHbsBookmarks();
+          showBookmarks(data, _bindHbsBookmarks);
         },
         error: function () {
         }
