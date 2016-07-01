@@ -1,6 +1,7 @@
 package com.bookmark.rest.service;
 
 import com.bookmark.domain.Bookmark;
+import com.bookmark.domain.BookmarkTags;
 import com.bookmark.rest.repository.BookmarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class BookmarkService {
     private BookmarkRepository bookmarkRepository;
 
     public List<Bookmark> getBookmarks() {
-        return bookmarkRepository.findAll();
+        return bookmarkRepository.findAllWithTags();
     }
 
     public Bookmark saveBookmark(Bookmark bookmark) {

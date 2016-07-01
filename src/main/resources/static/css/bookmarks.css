@@ -51,3 +51,21 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+/* TODO: refactor */
+.taggle_list {
+    margin: 0px 0px 10px;
+    padding: 0px;
+}
+
+.taggle_list li {
+    display: inline;
+}
+
+.taggle_list li span {
+    /*background-color: black;*/
+    /*color: white;*/
+    padding: 0px 10px;
+    text-decoration: none;
+    /*border-radius: 4px 4px 0 0;*/
+}

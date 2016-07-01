@@ -1,25 +1,55 @@
 package com.bookmark.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Bookmark {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "BOOKMARK_UID")
     private Long uid;
 
-    @Column
+    @Column(name = "URL")
     private String url;
 
-    @Column
+    @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column
+    @Column(name = "REG_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date regDate;
+
+    @Transient
+    private List<Tags> tagsList;
+
+    public List<Tags> getTagsList() {
+        List<Tags> tagsList = new ArrayList<>();
+        for (BookmarkTags bookmarkTags : bookmarkTagsList) {
+            Tags tags = new Tags();
+            tags.setUid(bookmarkTags.getTags().getUid());
+            tags.setName(bookmarkTags.getTags().getName());
+            tagsList.add(tags);
+        }
+
+        return tagsList;
+    }
+
+    @OneToMany(mappedBy = "bookmark", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
+    private List<BookmarkTags> bookmarkTagsList = new ArrayList<>();
+
+    public List<BookmarkTags> getBookmarkTagsList() {
+        return bookmarkTagsList;
+    }
+
+    public void setBookmarkTagsList(List<BookmarkTags> bookmarkTagsList) {
+        this.bookmarkTagsList = bookmarkTagsList;
+    }
 
     public Long getUid() {
         return uid;
@@ -45,7 +75,7 @@ public class Bookmark {
         this.description = description;
     }
 
-    public Date getRegDate() throws ParseException {
+    public Date getRegDate() {
         return regDate;
     }
 
@@ -60,6 +90,8 @@ public class Bookmark {
                 ", url='" + url + '\'' +
                 ", description='" + description + '\'' +
                 ", regDate=" + regDate +
+                ", tagsList=" + tagsList +
+                ", bookmarkTagsList=" + bookmarkTagsList +
                 '}';
     }
 }

@@ -9,6 +9,7 @@
     <script src="webjars/handlebars/4.0.5/handlebars.js"></script>
     <script src="webjars/jquery/3.0.0/jquery.js"></script>
     <script src="webjars/jquery-dateFormat/1.0.2/jquery-dateFormat.js"></script>
+    <script src="webjars/taggle/1.7.1/src/taggle.js"></script>
 </head>
 <body>
     <div class="container">
@@ -53,16 +54,19 @@
     <script type="text/x-handlebars-template" id="hbs_bookmarks">
         {{#bookmarks}}
         <article>
-            <a href="{{url}}" target="_blank">
-                {{#if description}}
-                    {{description}}
-                {{else}}
-                    {{url}}
-                {{/if}}
-            </a>
-            | {{dateformat regDate}}
-            | <a href="#" class="btn_update_bookmark" data-bookmark-uid="{{uid}}">update</a>
-            | <a href="#" class="btn_delete_bookmark" data-bookmark-uid="{{uid}}">delete</a>
+            <div>
+                <a href="{{url}}" target="_blank">
+                    {{#if description}}
+                        {{description}}
+                    {{else}}
+                        {{url}}
+                    {{/if}}
+                </a>
+                | {{dateformat regDate}}
+                | <a href="#" class="btn_update_bookmark" data-bookmark-uid="{{uid}}">update</a>
+                | <a href="#" class="btn_delete_bookmark" data-bookmark-uid="{{uid}}">delete</a>
+            </div>
+            <div class="bookmark_taggle"></div>
         </article>
         {{/bookmarks}}
     </script>
