@@ -9,6 +9,6 @@ import java.util.List;
 public interface BookmarkRepository extends JpaRepository <Bookmark, Long> {
     List<Bookmark> findByUrlContainingOrDescriptionContaining(String url, String description);
 
-    @Query("select b from Bookmark b join b.bookmarkTagsList t group by b.uid")
+    @Query("select b from Bookmark b left outer join b.bookmarkTagsList t group by b.uid")
     List<Bookmark> findAllWithTags();
 }
