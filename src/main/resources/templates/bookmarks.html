@@ -5,6 +5,8 @@
     <title>bookmarks</title>
 
     <link rel="stylesheet" type="text/css" href="/css/bookmarks.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/taggle.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="/css/srcTaggle.css"/>-->
 
     <script src="webjars/handlebars/4.0.5/handlebars.js"></script>
     <script src="webjars/jquery/3.0.0/jquery.js"></script>
@@ -66,7 +68,9 @@
                 | <a href="#" class="btn_update_bookmark" data-bookmark-uid="{{uid}}">update</a>
                 | <a href="#" class="btn_delete_bookmark" data-bookmark-uid="{{uid}}">delete</a>
             </div>
-            <div class="bookmark_taggle"></div>
+            <div class="bookmark_taggle">
+                <input type="text" id="bookmark_tagsList"/>
+            </div>
         </article>
         {{/bookmarks}}
     </script>

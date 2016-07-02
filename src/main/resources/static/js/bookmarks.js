@@ -9,8 +9,8 @@ var bookmarks = function () {
     $(".bookmarks_contents").html(html);
 
     // TODO: refactor
-    var t = $(".bookmark_taggle");
-    for (var i = 0; i < t.length; i++) {
+    var bookmark_taggle_div = $(".bookmark_taggle");
+    for (var i = 0; i < bookmark_taggle_div.length; i++) {
       var tagsList = data[i].tagsList;
       var tagsData = [];
 
@@ -19,17 +19,53 @@ var bookmarks = function () {
         tagsData.push(tagsName);
       }
 
-      new Taggle(t[i], {
-        tags: tagsData
+      $(bookmark_taggle_div[i]).find("#bookmark_tagsList").val(tagsData);
+
+      var taggle = new Taggle(bookmark_taggle_div[i], {
+        tags: tagsData,
+        duplicateTagClass: 'bounce',
+        onTagAdd: function(event, tag) {
+          addTag(event, tag);
+        },
+        onTagRemove: function(event, tag) {
+          removeTag(event, tag);
+        }
       });
 
       $(".taggle_placeholder").hide();    // Temp
-      $(".taggle_input").hide();          // Temp
     }
 
     _bindHbsBookmarks();
   };
 
+  var addTag = function (event, tag) {
+    var bookmark_taggle_div = event.path[3];
+
+    $(bookmark_taggle_div).find("#bookmark_tagsList").val( function( index, val ) {
+      if (val == '') {
+        return tag;
+
+      } else {
+        return val + "," + tag;
+      }
+    });
+  };
+
+  var removeTag = function (event, tag) {
+    var bookmark_taggle_div = event.path[3];
+
+    $(bookmark_taggle_div).find("#bookmark_tagsList").val( function( index, val ) {
+      var arrayVal = val.split(',');
+
+      for (var i = 0; i < arrayVal.length; i++) {
+        if (arrayVal[i] == tag) {
+          arrayVal.splice(i, 1);
+        }
+      }
+
+      return arrayVal.toString();
+    });
+  };
 
   var readBookmarks = function (_bindHbsBookmarks) {
     $.ajax({
