@@ -21,6 +21,7 @@ Tags.prototype.saveTags = function () {
 };
 
 // TODO: change extend options
+// TODO: option 값에 따라 변수 타입이 private or public 가능?
 // (http://stackoverflow.com/questions/9602449/a-javascript-design-pattern-for-options-with-default-values)
 var TagsList = function (options) {
   this.tagsList = [] || Tags;   // Tags Type??
@@ -63,7 +64,12 @@ TagsList.prototype.setTagsList = function (tagsList) {
 };
 
 TagsList.prototype.addTags = function (tags) {
-  this.tagsList.push(new Tags(tags.uid, tags.name));
+  if ((typeof (tags) == "object")) {
+    this.tagsList.push(tags);
+
+  } else {
+    throw "tags must be Tags Object";
+  }
 };
 
 TagsList.prototype.getTagsNameList = function () {
@@ -92,6 +98,20 @@ TagsList.prototype.isExistTagsName = function (inputTagsName) {
   return result;
 };
 
+TagsList.prototype.getTagsByTagsName = function (inputTagsName) {
+  var tagsList, resultTags;
+  tagsList = this.getTagsList();
+
+  tagsList.forEach(function (tags, i) {
+    if (tags.name == inputTagsName) {
+      resultTags = new Tags(tagsList[i].uid, tagsList[i].name);
+    }
+  });
+
+  return resultTags;
+};
+
+// @deprecated
 TagsList.prototype.getTagsUid = function (inputTagsName) {
   var tagsList, tagsUid;
   tagsList = this.getTagsList();

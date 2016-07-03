@@ -36,16 +36,15 @@ var bookmarks = function () {
     _bindHbsBookmarks();
   };
 
-  var addTag = function (event, addTagsName) {
+  var addTag = function (event, inputTagsName) {
     var bookmark_taggle_div = event.path[3];
 
     $(bookmark_taggle_div).find("#bookmark_tagsList").val( function( index, srcTagsList ) {
       var tagsList = new TagsList();
       tagsList.setTagsList(JSON.parse(srcTagsList));
 
-      if (apiTagsList.isExistTagsName(addTagsName)) {
-        var tagsUid = apiTagsList.getTagsUid(addTagsName);
-        tagsList.addTags(new Tags(tagsUid, addTagsName));
+      if (apiTagsList.isExistTagsName(inputTagsName)) {
+        tagsList.addTags(apiTagsList.getTagsByTagsName(inputTagsName));
 
         return JSON.stringify(tagsList.getTagsList());
 
