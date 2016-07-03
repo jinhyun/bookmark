@@ -53,6 +53,7 @@ TagsList.prototype.getTagsList = function () {
   return this.tagsList;
 };
 
+// TODO: tagsList construct
 TagsList.prototype.setTagsList = function (tagsList) {
   var parent = this;
 
@@ -61,9 +62,14 @@ TagsList.prototype.setTagsList = function (tagsList) {
   });
 };
 
+TagsList.prototype.addTags = function (tags) {
+  this.tagsList.push(new Tags(tags.uid, tags.name));
+};
+
 TagsList.prototype.getTagsNameList = function () {
-  var tagsList = this.tagsList;
-  var tagsNameList = [];
+  var tagsList, tagsNameList;
+  tagsList = this.tagsList;
+  tagsNameList = [];
 
   tagsList.forEach(function (tags) {
     tagsNameList.push(tags.name);
@@ -72,10 +78,34 @@ TagsList.prototype.getTagsNameList = function () {
   return tagsNameList;
 };
 
-TagsList.prototype.isExistTagsUid = function (tagsUid) {
-  var tagsList = this.getTagsList();
+TagsList.prototype.isExistTagsName = function (inputTagsName) {
+  var tagsList, result;
+  tagsList = this.getTagsList();
+  result = false;
 
   tagsList.forEach(function (tags) {
-    return (tags.uid == tagsUid);
+    if (tags.name == inputTagsName) {
+      result = true;
+    }
   });
+
+  return result;
+};
+
+TagsList.prototype.getTagsUid = function (inputTagsName) {
+  var tagsList, tagsUid;
+  tagsList = this.getTagsList();
+  tagsUid = 0;
+
+  tagsList.forEach(function (tags, i) {
+    if (tags.name == inputTagsName) {
+      tagsUid = tagsList[i].uid;
+
+    } else {
+      // TODO: tagsUid가 없을때 exception
+      tagsUid = 0;
+    }
+  });
+
+  return tagsUid;
 };

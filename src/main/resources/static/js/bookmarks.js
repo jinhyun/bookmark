@@ -1,6 +1,6 @@
 var bookmarks = function () {
   // TODO: refactor naming이 중복됨
-  var tagsListObj = new TagsList(true);
+  var apiTagsList = new TagsList(true);
 
   var showBookmarks = function (data, _bindHbsBookmarks) {
     var bookmarks, template, html;
@@ -14,13 +14,13 @@ var bookmarks = function () {
     // TODO: refactor
     var bookmark_taggle_div = $(".bookmark_taggle");
     for (var i = 0; i < bookmark_taggle_div.length; i++) {
-      var tagsList = new TagsList();
-      tagsList.setTagsList(data[i].tagsList);
+      var bookmarkTagsList = new TagsList();
+      bookmarkTagsList.setTagsList(data[i].tagsList);
 
-      $(bookmark_taggle_div[i]).find("#bookmark_tagsList").val(JSON.stringify(tagsList.getTagsList()));
+      $(bookmark_taggle_div[i]).find("#bookmark_tagsList").val(JSON.stringify(bookmarkTagsList.getTagsList()));
 
       var taggle = new Taggle(bookmark_taggle_div[i], {
-        tags: tagsList.getTagsNameList(),
+        tags: bookmarkTagsList.getTagsNameList(),
         duplicateTagClass: 'bounce',
         onTagAdd: function(event, tag) {
           addTag(event, tag);
@@ -36,15 +36,22 @@ var bookmarks = function () {
     _bindHbsBookmarks();
   };
 
-  var addTag = function (event, tag) {
+  var addTag = function (event, addTagsName) {
     var bookmark_taggle_div = event.path[3];
 
-    $(bookmark_taggle_div).find("#bookmark_tagsList").val( function( index, val ) {
-      if (val == '') {
-        return tag;
+    $(bookmark_taggle_div).find("#bookmark_tagsList").val( function( index, srcTagsList ) {
+      var tagsList = new TagsList();
+      tagsList.setTagsList(JSON.parse(srcTagsList));
+
+      if (apiTagsList.isExistTagsName(addTagsName)) {
+        var tagsUid = apiTagsList.getTagsUid(addTagsName);
+        tagsList.addTags(new Tags(tagsUid, addTagsName));
+
+        return JSON.stringify(tagsList.getTagsList());
 
       } else {
-        return val + "," + tag;
+        // - saveTags
+        // - saveBookmarkTags
       }
     });
   };
