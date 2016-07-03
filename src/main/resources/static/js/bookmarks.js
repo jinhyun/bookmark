@@ -1,4 +1,7 @@
 var bookmarks = function () {
+  // TODO: refactor naming이 중복됨
+  var tagsListObj = new TagsList(true);
+
   var showBookmarks = function (data, _bindHbsBookmarks) {
     var bookmarks, template, html;
 
@@ -11,18 +14,13 @@ var bookmarks = function () {
     // TODO: refactor
     var bookmark_taggle_div = $(".bookmark_taggle");
     for (var i = 0; i < bookmark_taggle_div.length; i++) {
-      var tagsList = data[i].tagsList;
-      var tagsData = [];
+      var tagsList = new TagsList();
+      tagsList.setTagsList(data[i].tagsList);
 
-      for (var j = 0; j < tagsList.length; j++) {
-        var tagsName = tagsList[j].name;
-        tagsData.push(tagsName);
-      }
-
-      $(bookmark_taggle_div[i]).find("#bookmark_tagsList").val(tagsData);
+      $(bookmark_taggle_div[i]).find("#bookmark_tagsList").val(JSON.stringify(tagsList.getTagsList()));
 
       var taggle = new Taggle(bookmark_taggle_div[i], {
-        tags: tagsData,
+        tags: tagsList.getTagsNameList(),
         duplicateTagClass: 'bounce',
         onTagAdd: function(event, tag) {
           addTag(event, tag);
