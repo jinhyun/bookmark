@@ -5,6 +5,7 @@
 - [] bookmarks.js
     - [] crud 네이밍
     - [] client 내 / server 호출에 대한 네이밍
+    - [] callback > callback > callback 이 너무 많음
 - [] 사이드 태그검색
 - [] 구글 검색 키워드 저장
 - [] 페이지 타이틀 추출 저장

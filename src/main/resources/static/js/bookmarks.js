@@ -36,6 +36,7 @@ var bookmarks = function () {
     _bindHbsBookmarks();
   };
 
+  // TODO: refactor 복잡함
   var addTag = function (event, inputTagsName) {
     var bookmark_taggle_div = event.path[3];
 
@@ -43,14 +44,29 @@ var bookmarks = function () {
       var tagsList = new TagsList();
       tagsList.setTagsList(JSON.parse(srcTagsList));
 
-      if (apiTagsList.isExistTagsName(inputTagsName)) {
+      var _showTags = function (inputTagsName) {
         tagsList.addTags(apiTagsList.getTagsByTagsName(inputTagsName));
 
         return JSON.stringify(tagsList.getTagsList());
+      };
+
+      if (apiTagsList.isExistTagsName(inputTagsName)) {
+        return _showTags(inputTagsName);
+        /*
+         1. saveBookmarkTags(): ajax
+         2. _showTags()
+
+         - saveBookmarkTags(_showTags)
+         */
 
       } else {
-        // - saveTags
-        // - saveBookmarkTags
+        /*
+           1. saveTags(): ajax
+           2. saveBookmarkTags(): ajax
+           3. _showTags()
+
+         - saveTags(saveBookmarkTags, _showTags)
+         */
       }
     });
   };
