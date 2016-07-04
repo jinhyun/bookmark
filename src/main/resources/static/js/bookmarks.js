@@ -1,5 +1,6 @@
 var bookmarks = function () {
   var GlobalTagsList = new TagsList(true);
+  var GlobalInputTaggle;
 
   var showBookmarks = function (data, _bindHbsBookmarks) {
     var bookmarks, template, html;
@@ -25,7 +26,9 @@ var bookmarks = function () {
           addTag(event, tagName);
         },
         onTagRemove: function (event, tag) {
-          removeTag(event, tag);
+          if (typeof event != 'undefined') {
+            removeTag(event, tag);
+          }
         }
       });
 
@@ -36,13 +39,15 @@ var bookmarks = function () {
   };
 
   var bindAddBookmarkTaggle = function () {
-    var taggle = new Taggle($(".input_taggle")[0], {
+    GlobalInputTaggle = new Taggle($(".input_taggle")[0], {
       duplicateTagClass: 'bounce',
       onTagAdd: function (event, tagName) {
         showAddBookmarkTags(tagName);
       },
       onTagRemove: function (event, tagName) {
-        showRemoveBookmarkTags(tagName);
+        if (typeof event != 'undefined') {
+          showRemoveBookmarkTags(tagName);
+        }
       }
     });
 
@@ -50,15 +55,15 @@ var bookmarks = function () {
   };
 
   var showAddBookmarkTags = function (inputTagName) {
-    var inputTagsListElem, tagsList;
+    var inputTagsList, tagsList;
 
-    inputTagsListElem = $("#input_tagsList");
+    inputTagsList = $("#input_tagsList").val();
 
-    if (inputTagsListElem.val() == "") {
+    if (inputTagsList == "") {
       tagsList = [];
 
     } else {
-      tagsList = JSON.parse(inputTagsListElem.val());
+      tagsList = JSON.parse(inputTagsList);
     }
 
     tagsList.push(inputTagName);
@@ -67,10 +72,13 @@ var bookmarks = function () {
   };
 
   var showRemoveBookmarkTags = function (inputTagName) {
-    var inputTagsListElem, tagsList;
+    var inputTagsList, tagsList;
 
-    inputTagsListElem = $("#input_tagsList");
-    tagsList = JSON.parse(inputTagsListElem.val());
+    inputTagsList = $("#input_tagsList").val();
+
+    if (inputTagsList != "") {
+      tagsList = JSON.parse(inputTagsList.val());
+    }
 
     tagsList.forEach(function (tagName, i) {
       if (tagName == inputTagName) {
@@ -132,7 +140,10 @@ var bookmarks = function () {
 
   var showAddTags = function (elem, tags) {
     var tagsList = new TagsList();
-    tagsList.setTagsList(JSON.parse(elem.val()));
+
+    if (elem.val() != "") {
+      tagsList.setTagsList(JSON.parse(elem.val()));
+    }
     tagsList.addTags(new Tags(tags.uid, tags.name));
 
     elem.val(JSON.stringify(tagsList.getTagsList()));
@@ -140,7 +151,10 @@ var bookmarks = function () {
 
   var showRemoveTags = function (elem, removeTags) {
     var tagsListObj = new TagsList();
-    tagsListObj.setTagsList(JSON.parse(elem.val()));
+
+    if (elem.val() != "") {
+      tagsListObj.setTagsList(JSON.parse(elem.val()));
+    }
 
     var tagsList = tagsListObj.getTagsList();
     tagsList.forEach(function (tags, i) {
@@ -198,6 +212,8 @@ var bookmarks = function () {
   var clearInputData = function () {
     $("#input_url").val("");
     $("#input_desc").val("");
+    $("#input_tagsList").val("");
+    GlobalInputTaggle.removeAll();
   };
 
   var modalReadBookmark = function (el) {
@@ -276,15 +292,18 @@ var bookmarks = function () {
 
   var addBookmark = function () {
     var bookmarkTagsList = [];
+    var inputTagsList = $("#input_tagsList").val();
 
-    JSON.parse($("#input_tagsList").val()).forEach(function (tagName) {
-      var tags, bookmarkTags;
+    if (inputTagsList != ""){
+      JSON.parse(inputTagsList).forEach(function (tagName) {
+        var tags, bookmarkTags;
 
-      tags = { name : tagName};
-      bookmarkTags = { tags : tags };
+        tags = { name : tagName};
+        bookmarkTags = { tags : tags };
 
-      bookmarkTagsList.push(bookmarkTags);
-    });
+        bookmarkTagsList.push(bookmarkTags);
+      });
+    }
 
     var bookmark = {
       url: $("#input_url").val(),
