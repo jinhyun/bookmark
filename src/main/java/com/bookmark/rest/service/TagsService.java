@@ -25,4 +25,8 @@ public class TagsService {
     public Tags getTags(Long tagsUid) {
         return tagsRepository.findOne(tagsUid);
     }
+
+    public Tags getTagsByName(String tagsName) {
+        return tagsRepository.findByName(tagsName);
+    }
 }

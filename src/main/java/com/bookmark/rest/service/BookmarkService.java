@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,8 +24,37 @@ public class BookmarkService {
         return bookmarkRepository.findAllWithTags();
     }
 
-    public Bookmark saveBookmark(Bookmark bookmark) {
-        return bookmarkRepository.save(bookmark);
+    public Bookmark saveBookmark(Bookmark inputBookmark) {
+        if (inputBookmark.getBookmarkTagsList().size() == 0) {
+            return bookmarkRepository.save(inputBookmark);
+
+        } else {
+            List<BookmarkTags> inputBookmarkTagsList = inputBookmark.getBookmarkTagsList();
+            inputBookmark.setBookmarkTagsList(null);
+            Bookmark savedBookmark = bookmarkRepository.save(inputBookmark);
+
+            List<BookmarkTags> bookmarkTagsList = new ArrayList<>();
+
+            for (BookmarkTags inputBookmarkTags : inputBookmarkTagsList) {
+                Tags inputTags = inputBookmarkTags.getTags();
+                Tags resultTags = tagsService.getTagsByName(inputTags.getName());
+
+                if (resultTags == null) {
+                    Tags tags = new Tags();
+                    tags.setName(inputTags.getName());
+                    resultTags = tagsService.saveTags(tags);
+                }
+
+                BookmarkTags bookmarkTags = new BookmarkTags();
+                bookmarkTags.setBookmark(savedBookmark);
+                bookmarkTags.setTags(resultTags);
+                bookmarkTagsList.add(bookmarkTags);
+            }
+
+            savedBookmark.setBookmarkTagsList(bookmarkTagsList);
+
+            return bookmarkRepository.saveAndFlush(savedBookmark);
+        }
     }
 
     public Bookmark getBookmark(Long uid) {

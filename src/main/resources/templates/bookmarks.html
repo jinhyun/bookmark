@@ -27,13 +27,22 @@
 
         <section>
             <div class="add_bookmark">
-                <input type="text" id="input_url" placeholder="Input a url"/>
-                <input type="text" id="input_desc" placeholder="Input a description"/>
-                <button type="button" id="btn_add_bookmark">add</button>
+                <div class="left">
+                    <input type="text" id="input_url" placeholder="Input a url"/>
+                    <input type="text" id="input_desc" placeholder="Input a description"/>
+                </div>
+
+                <div class="left">
+                    <button type="button" id="btn_add_bookmark">add</button>
+                </div>
+
+                <div class="input_taggle">
+                    <input type="hidden" id="input_tagsList"/>
+                </div>
             </div>
         </section>
 
-        <section class="bookmarks_contents"></section>
+        <section class="bookmarks_contents clear"></section>
 
         <section>
             <div class="modal">

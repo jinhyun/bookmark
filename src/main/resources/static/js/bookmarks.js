@@ -35,6 +35,52 @@ var bookmarks = function () {
     _bindHbsBookmarks();
   };
 
+  var bindAddBookmarkTaggle = function () {
+    var taggle = new Taggle($(".input_taggle")[0], {
+      duplicateTagClass: 'bounce',
+      onTagAdd: function (event, tagName) {
+        showAddBookmarkTags(tagName);
+      },
+      onTagRemove: function (event, tagName) {
+        showRemoveBookmarkTags(tagName);
+      }
+    });
+
+    $(".taggle_placeholder").hide();    // Temp
+  };
+
+  var showAddBookmarkTags = function (inputTagName) {
+    var inputTagsListElem, tagsList;
+
+    inputTagsListElem = $("#input_tagsList");
+
+    if (inputTagsListElem.val() == "") {
+      tagsList = [];
+
+    } else {
+      tagsList = JSON.parse(inputTagsListElem.val());
+    }
+
+    tagsList.push(inputTagName);
+
+    $("#input_tagsList").val(JSON.stringify(tagsList));
+  };
+
+  var showRemoveBookmarkTags = function (inputTagName) {
+    var inputTagsListElem, tagsList;
+
+    inputTagsListElem = $("#input_tagsList");
+    tagsList = JSON.parse(inputTagsListElem.val());
+
+    tagsList.forEach(function (tagName, i) {
+      if (tagName == inputTagName) {
+        tagsList.splice(i, 1);
+      }
+    });
+
+    $("#input_tagsList").val(JSON.stringify(tagsList));
+  };
+
   var saveBookmarkTags = function (bookmarkUid, tags) {
     return $.ajax({
       url:"/api/bookmarks/" + bookmarkUid + "/tags",
@@ -230,10 +276,22 @@ var bookmarks = function () {
 
   var bindAddBookmark = function () {
     $("#btn_add_bookmark").click(function() {
+      var bookmarkTagsList = [];
+
+      JSON.parse($("#input_tagsList").val()).forEach(function (tagName) {
+        var tags, bookmarkTags;
+
+        tags = { name : tagName};
+        bookmarkTags = { tags : tags };
+
+        bookmarkTagsList.push(bookmarkTags);
+      });
+
       var bookmark = {
         url: $("#input_url").val(),
         description: $("#input_desc").val(),
-        regDate: new Date()
+        regDate: new Date(),
+        bookmarkTagsList: bookmarkTagsList
       };
 
       $.ajax({
@@ -282,6 +340,7 @@ var bookmarks = function () {
       bindHeader();
       bindModal();
       bindAddBookmark();
+      bindAddBookmarkTaggle();
     },
 
     readBookmarks: function() {

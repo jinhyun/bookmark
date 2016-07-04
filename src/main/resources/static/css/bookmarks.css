@@ -9,6 +9,10 @@
     margin-right: 20px;
 }
 
+.clear {
+    clear: both;
+}
+
 .add_bookmark {
     margin-top: 10px;
 }

@@ -1,7 +1,7 @@
 ##### TODO List #####
 - [o] 북마크 CRUD
 - [o] 메인검색 (설명, url)
-- [] 태그 구현
+- [o] 태그 구현
 - [] bookmarks.js
     - [] crud 네이밍
     - [] client 내 / server 호출에 대한 네이밍
