@@ -110,22 +110,3 @@ TagsList.prototype.getTagsByTagsName = function (inputTagsName) {
 
   return resultTags;
 };
-
-// @deprecated
-TagsList.prototype.getTagsUid = function (inputTagsName) {
-  var tagsList, tagsUid;
-  tagsList = this.getTagsList();
-  tagsUid = 0;
-
-  tagsList.forEach(function (tags, i) {
-    if (tags.name == inputTagsName) {
-      tagsUid = tagsList[i].uid;
-
-    } else {
-      // TODO: tagsUid가 없을때 exception
-      tagsUid = 0;
-    }
-  });
-
-  return tagsUid;
-};
