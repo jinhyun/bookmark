@@ -1,6 +1,7 @@
 package com.bookmark.rest.controller;
 
 import com.bookmark.domain.Bookmark;
+import com.bookmark.domain.Tags;
 import com.bookmark.rest.service.BookmarkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -41,5 +42,10 @@ public class BookmarkRestController {
     @GetMapping("/search/bookmarks/{contents}")
     public List<Bookmark> findAllBookmarks(@PathVariable String contents) {
         return bookmarkService.findAllBookmarks(contents);
+    }
+
+    @PostMapping("/bookmarks/{bookmarkUid}/tags")
+    public Tags createBookmarkTags (@PathVariable Long bookmarkUid, @RequestBody Tags tags) {
+        return bookmarkService.saveBookmarkTags(bookmarkUid, tags);
     }
 }

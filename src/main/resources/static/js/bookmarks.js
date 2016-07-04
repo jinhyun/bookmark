@@ -36,39 +36,70 @@ var bookmarks = function () {
     _bindHbsBookmarks();
   };
 
-  // TODO: refactor 복잡함
-  var addTag = function (event, inputTagsName) {
-    var bookmark_taggle_div = event.path[3];
+  var saveBookmarkTags = function (bookmark_taggle_div, tags, _showTags) {
+    var tags, bookmarkUid;
+    bookmarkUid = $(bookmark_taggle_div).data("bookmarkUid");
 
-    $(bookmark_taggle_div).find("#bookmark_tagsList").val( function( index, srcTagsList ) {
-      var tagsList = new TagsList();
-      tagsList.setTagsList(JSON.parse(srcTagsList));
-
-      var _showTags = function (inputTagsName) {
-        tagsList.addTags(apiTagsList.getTagsByTagsName(inputTagsName));
-
-        return JSON.stringify(tagsList.getTagsList());
-      };
-
-      if (apiTagsList.isExistTagsName(inputTagsName)) {
-        return _showTags(inputTagsName);
-        /*
-         1. saveBookmarkTags(): ajax
-         2. _showTags()
-
-         - saveBookmarkTags(_showTags)
-         */
-
-      } else {
-        /*
-           1. saveTags(): ajax
-           2. saveBookmarkTags(): ajax
-           3. _showTags()
-
-         - saveTags(saveBookmarkTags, _showTags)
-         */
+    $.ajax({
+      url:"/api/bookmarks/" + bookmarkUid + "/tags",
+      type: "POST",
+      data: JSON.stringify(tags),
+      contentType: "application/json",
+      success: function (resultTags) {
+        if (typeof _showTags != "undefined") {
+          return _showTags(resultTags);
+        }
       }
     });
+  };
+
+  var saveTags = function (inputTagsName) {
+    var tags = {
+      name: inputTagsName
+    };
+
+    var ajax = $.ajax({
+      url:"/api/tags",
+      type: "POST",
+      data: JSON.stringify(tags),
+      contentType: "application/json"
+    });
+
+    return ajax;
+  };
+
+  var getAddedTagsList = function(inputTagsName, bookmark_taggle_div) {
+    var tagsList = new TagsList();
+    tagsList.setTagsList(JSON.parse(bookmark_taggle_div.val()));
+
+    var _showTags = function (resultTags) {
+      tagsList.addTags(new Tags(resultTags.uid, resultTags.name));
+
+      bookmark_taggle_div.val(JSON.stringify(tagsList.getTagsList()));
+    };
+
+    if (apiTagsList.isExistTagsName(inputTagsName)) {
+      var tags = apiTagsList.getTagsByTagsName(inputTagsName);
+      saveBookmarkTags(bookmark_taggle_div, tags, _showTags);
+
+    } else {
+      var savedTags = saveTags(inputTagsName);
+
+      savedTags.done(function(tags){
+        return saveBookmarkTags(bookmark_taggle_div, tags);
+
+      }).done(function(data){
+        _showTags(data);
+      });
+    }
+  };
+
+  // TODO: refactor 복잡함
+  var addTag = function (event, inputTagsName) {
+    var bookmark_taggle_div;
+    bookmark_taggle_div = $(event.path[3]).find("#bookmark_tagsList");
+
+    getAddedTagsList(inputTagsName, bookmark_taggle_div);
   };
 
   var removeTag = function (event, tag) {

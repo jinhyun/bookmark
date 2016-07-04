@@ -15,7 +15,7 @@ public class TagsRestController {
 
     @GetMapping("/tags")
     public List<Tags> readTags() {
-        return tagsService.getTags();
+        return tagsService.getTagsList();
     }
 
     @PostMapping("/tags")

@@ -2,7 +2,9 @@ package com.bookmark.rest.service;
 
 import com.bookmark.domain.Bookmark;
 import com.bookmark.domain.BookmarkTags;
+import com.bookmark.domain.Tags;
 import com.bookmark.rest.repository.BookmarkRepository;
+import com.bookmark.rest.repository.TagsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,9 @@ import java.util.List;
 public class BookmarkService {
     @Autowired
     private BookmarkRepository bookmarkRepository;
+
+    @Autowired
+    private TagsService tagsService;
 
     public List<Bookmark> getBookmarks() {
         return bookmarkRepository.findAllWithTags();
@@ -43,5 +48,20 @@ public class BookmarkService {
         String url = contents;
         String description = contents;
         return bookmarkRepository.findByUrlContainingOrDescriptionContaining(url, description);
+    }
+
+    public Tags saveBookmarkTags(Long bookmarkUid, Tags inputTags) {
+        Bookmark bookmark = this.getBookmark(bookmarkUid);
+        Tags tags = tagsService.getTags(inputTags.getUid());
+
+        BookmarkTags bookmarkTags = new BookmarkTags();
+        bookmarkTags.setBookmark(bookmark);
+        bookmarkTags.setTags(tags);
+
+        bookmark.getBookmarkTagsList().add(bookmarkTags);
+
+        bookmarkRepository.saveAndFlush(bookmark);
+
+        return tags;
     }
 }
