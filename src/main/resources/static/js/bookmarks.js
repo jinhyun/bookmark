@@ -21,10 +21,10 @@ var bookmarks = function () {
       var taggle = new Taggle(bookmark_taggle_div[i], {
         tags: bookmarkTagsList.getTagsNameList(),
         duplicateTagClass: 'bounce',
-        onTagAdd: function(event, tagName) {
+        onTagAdd: function (event, tagName) {
           addTag(event, tagName);
         },
-        onTagRemove: function(event, tag) {
+        onTagRemove: function (event, tag) {
           removeTag(event, tag);
         }
       });
@@ -176,21 +176,21 @@ var bookmarks = function () {
     $.ajax({
       type: "GET",
       url: "/api/bookmarks",
-      success: function(data) {
+      success: function (data) {
         showBookmarks(data, _bindHbsBookmarks);
       },
-      error: function() {
+      error: function () {
 
       }
     });
   };
 
   var bindHbsBookmarks = function () {
-    $(".btn_update_bookmark").click(function() {
+    $(".btn_update_bookmark").click(function () {
       modalReadBookmark(this);
     });
 
-    $(".btn_delete_bookmark").click(function() {
+    $(".btn_delete_bookmark").click(function () {
       deleteBookmark(this);
     });
   };
@@ -205,7 +205,7 @@ var bookmarks = function () {
     $.ajax({
       type: "GET",
       url: "/api/bookmarks/" + bookmarkUid,
-      success: function(data) {
+      success: function (data) {
         var template, html;
 
         template = Handlebars.compile($("#hbs_bookmark_edit").html());
@@ -213,13 +213,13 @@ var bookmarks = function () {
 
         $(".modal_detail_content").html(html);
 
-        $("#btn_updateBookmark").click(function() {
+        $("#btn_updateBookmark").click(function () {
           updateBookmark(this);
         });
 
         $(".modal").show();
       },
-      error: function() {
+      error: function () {
 
       }
     });
@@ -262,8 +262,8 @@ var bookmarks = function () {
     })
   };
 
-  var bindModal = function() {
-    $(".modal_close").click (function() {
+  var bindModal = function () {
+    $(".modal_close").click (function () {
       $(".modal").hide();
     });
 
@@ -274,39 +274,43 @@ var bookmarks = function () {
     };
   };
 
+  var addBookmark = function () {
+    var bookmarkTagsList = [];
+
+    JSON.parse($("#input_tagsList").val()).forEach(function (tagName) {
+      var tags, bookmarkTags;
+
+      tags = { name : tagName};
+      bookmarkTags = { tags : tags };
+
+      bookmarkTagsList.push(bookmarkTags);
+    });
+
+    var bookmark = {
+      url: $("#input_url").val(),
+      description: $("#input_desc").val(),
+      regDate: new Date(),
+      bookmarkTagsList: bookmarkTagsList
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "/api/bookmarks",
+      data: JSON.stringify(bookmark),
+      contentType: "application/json",
+      success: function (data) {
+        bookmarks.readBookmarks();
+        clearInputData();
+      },
+      error: function () {
+        console.log("error");
+      }
+    })
+  };
+
   var bindAddBookmark = function () {
-    $("#btn_add_bookmark").click(function() {
-      var bookmarkTagsList = [];
-
-      JSON.parse($("#input_tagsList").val()).forEach(function (tagName) {
-        var tags, bookmarkTags;
-
-        tags = { name : tagName};
-        bookmarkTags = { tags : tags };
-
-        bookmarkTagsList.push(bookmarkTags);
-      });
-
-      var bookmark = {
-        url: $("#input_url").val(),
-        description: $("#input_desc").val(),
-        regDate: new Date(),
-        bookmarkTagsList: bookmarkTagsList
-      };
-
-      $.ajax({
-        type: "POST",
-        url: "/api/bookmarks",
-        data: JSON.stringify(bookmark),
-        contentType: "application/json",
-        success: function(data) {
-          bookmarks.readBookmarks();
-          clearInputData();
-        },
-        error: function() {
-          console.log("error");
-        }
-      })
+    $("#btn_add_bookmark").click(function () {
+      addBookmark();
     });
   };
 
@@ -336,14 +340,14 @@ var bookmarks = function () {
   };
 
   return {
-    bind: function() {
+    bind: function () {
       bindHeader();
       bindModal();
       bindAddBookmark();
       bindAddBookmarkTaggle();
     },
 
-    readBookmarks: function() {
+    readBookmarks: function () {
       readBookmarks(bindHbsBookmarks);
     }
   }
