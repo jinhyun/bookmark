@@ -40,13 +40,4 @@ public class BookmarkTags {
     public void setBookmark(Bookmark bookmark) {
         this.bookmark = bookmark;
     }
-
-    @Override
-    public String toString() {
-        return "BookmarkTags{" +
-                "uid=" + uid +
-                ", bookmark=" + bookmark +
-                ", tags=" + tags +
-                '}';
-    }
 }

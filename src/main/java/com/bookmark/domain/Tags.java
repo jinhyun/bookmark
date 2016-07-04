@@ -32,13 +32,4 @@ public class Tags {
     public void setName(String name) {
         this.name = name;
     }
-
-    @Override
-    public String toString() {
-        return "Tags{" +
-                "uid=" + uid +
-                ", name='" + name + '\'' +
-                ", bookmarkTags=" + bookmarkTags +
-                '}';
-    }
 }

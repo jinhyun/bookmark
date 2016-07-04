@@ -92,20 +92,38 @@ var bookmarks = function () {
     elem.val(JSON.stringify(tagsList.getTagsList()));
   };
 
-  var removeTag = function (event, tag) {
-    var bookmark_taggle_div = event.path[3];
+  var showRemoveTags = function (elem, removeTags) {
+    var tagsListObj = new TagsList();
+    tagsListObj.setTagsList(JSON.parse(elem.val()));
 
-    $(bookmark_taggle_div).find("#bookmark_tagsList").val( function( index, val ) {
-      var arrayVal = val.split(',');
-
-      for (var i = 0; i < arrayVal.length; i++) {
-        if (arrayVal[i] == tag) {
-          arrayVal.splice(i, 1);
-        }
+    var tagsList = tagsListObj.getTagsList();
+    tagsList.forEach(function (tags, i) {
+      if (tags.uid == removeTags.uid){
+        tagsList.splice(i, 1);
       }
-
-      return arrayVal.toString();
     });
+
+    elem.val(JSON.stringify(tagsList));
+  };
+
+  var deleteBookmarkTags = function (bookmarkUid, tagsUid) {
+    return $.ajax({
+      url:"/api/bookmarks/" + bookmarkUid + "/tags/" + tagsUid,
+      type: "DELETE"
+    });
+  };
+
+  var removeTag = function (event, tag) {
+    var bookmark_tagsList_elem, globalTags, bookmarkUid;
+
+    bookmark_tagsList_elem = $(event.path[3]).find("#bookmark_tagsList");
+    bookmarkUid = $(bookmark_tagsList_elem).data("bookmarkUid");
+    globalTags = GlobalTagsList.getTagsByTagsName(tag);
+
+    deleteBookmarkTags(bookmarkUid, globalTags.uid)
+      .done(function (tags) {
+        showRemoveTags(bookmark_tagsList_elem, tags);
+      });
   };
 
   var readBookmarks = function (_bindHbsBookmarks) {

@@ -4,7 +4,6 @@ import com.bookmark.domain.Bookmark;
 import com.bookmark.domain.BookmarkTags;
 import com.bookmark.domain.Tags;
 import com.bookmark.rest.repository.BookmarkRepository;
-import com.bookmark.rest.repository.TagsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

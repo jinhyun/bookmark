@@ -82,16 +82,4 @@ public class Bookmark {
     public void setRegDate(Date regDate) {
         this.regDate = regDate;
     }
-
-    @Override
-    public String toString() {
-        return "Bookmark{" +
-                "uid=" + uid +
-                ", url='" + url + '\'' +
-                ", description='" + description + '\'' +
-                ", regDate=" + regDate +
-                ", tagsList=" + tagsList +
-                ", bookmarkTagsList=" + bookmarkTagsList +
-                '}';
-    }
 }

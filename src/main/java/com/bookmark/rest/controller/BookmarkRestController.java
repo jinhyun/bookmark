@@ -3,6 +3,7 @@ package com.bookmark.rest.controller;
 import com.bookmark.domain.Bookmark;
 import com.bookmark.domain.Tags;
 import com.bookmark.rest.service.BookmarkService;
+import com.bookmark.rest.service.BookmarkTagsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,9 @@ import java.util.List;
 public class BookmarkRestController {
     @Autowired
     private BookmarkService bookmarkService;
+
+    @Autowired
+    private BookmarkTagsService bookmarkTagsService;
 
     @GetMapping("/bookmarks")
     public List<Bookmark> readBookmarks() {
@@ -44,8 +48,14 @@ public class BookmarkRestController {
         return bookmarkService.findAllBookmarks(contents);
     }
 
+    // TODO: refactor create/save > add
     @PostMapping("/bookmarks/{bookmarkUid}/tags")
     public Tags createBookmarkTags (@PathVariable Long bookmarkUid, @RequestBody Tags tags) {
         return bookmarkService.saveBookmarkTags(bookmarkUid, tags);
+    }
+
+    @DeleteMapping("/bookmarks/{bookmarkUid}/tags/{tagsUid}")
+    public Tags deleteBookmarkTags (@PathVariable Long bookmarkUid, @PathVariable Long tagsUid) {
+        return bookmarkTagsService.deleteBookmarkTags(bookmarkUid, tagsUid);
     }
 }
