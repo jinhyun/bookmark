@@ -22,8 +22,8 @@ var bookmarks = function () {
       var taggle = new Taggle(bookmark_taggle_div[i], {
         tags: bookmarkTagsList.getTagsNameList(),
         duplicateTagClass: 'bounce',
-        onTagAdd: function(event, tag) {
-          addTag(event, tag);
+        onTagAdd: function(event, tagName) {
+          addTag(event, tagName);
         },
         onTagRemove: function(event, tag) {
           removeTag(event, tag);
@@ -36,70 +36,61 @@ var bookmarks = function () {
     _bindHbsBookmarks();
   };
 
-  var saveBookmarkTags = function (bookmark_taggle_div, tags, _showTags) {
-    var tags, bookmarkUid;
-    bookmarkUid = $(bookmark_taggle_div).data("bookmarkUid");
-
-    $.ajax({
+  var saveBookmarkTags = function (bookmarkUid, tags) {
+    return $.ajax({
       url:"/api/bookmarks/" + bookmarkUid + "/tags",
       type: "POST",
       data: JSON.stringify(tags),
-      contentType: "application/json",
-      success: function (resultTags) {
-        if (typeof _showTags != "undefined") {
-          return _showTags(resultTags);
-        }
-      }
+      contentType: "application/json"
     });
   };
 
-  var saveTags = function (inputTagsName) {
-    var tags = {
-      name: inputTagsName
-    };
+  var saveTags = function (tagsName) {
+    var tags = { name: tagsName };
 
-    var ajax = $.ajax({
+    return $.ajax({
       url:"/api/tags",
       type: "POST",
       data: JSON.stringify(tags),
       contentType: "application/json"
     });
-
-    return ajax;
   };
 
-  var getAddedTagsList = function(inputTagsName, bookmark_taggle_div) {
-    var tagsList = new TagsList();
-    tagsList.setTagsList(JSON.parse(bookmark_taggle_div.val()));
+  var addTag = function (event, inputTagName) {
+    var bookmark_tagsList_elem = $(event.path[3]).find("#bookmark_tagsList");
 
-    var _showTags = function (resultTags) {
-      tagsList.addTags(new Tags(resultTags.uid, resultTags.name));
+    if (apiTagsList.isExistTagsName(inputTagName)) {
+      var apiTags, bookmarkUid;
+      apiTags = apiTagsList.getTagsByTagsName(inputTagName);
+      bookmarkUid = $(bookmark_tagsList_elem).data("bookmarkUid");
 
-      bookmark_taggle_div.val(JSON.stringify(tagsList.getTagsList()));
-    };
-
-    if (apiTagsList.isExistTagsName(inputTagsName)) {
-      var tags = apiTagsList.getTagsByTagsName(inputTagsName);
-      saveBookmarkTags(bookmark_taggle_div, tags, _showTags);
+      saveBookmarkTags(bookmarkUid, apiTags)
+        .done(function (tags) {
+          showAddTags(bookmark_tagsList_elem, tags);
+        });
 
     } else {
-      var savedTags = saveTags(inputTagsName);
+      saveTags(inputTagName)
+        .done(function (tags) {
+          var bookmarkUid = $(bookmark_tagsList_elem).data("bookmarkUid");
 
-      savedTags.done(function(tags){
-        return saveBookmarkTags(bookmark_taggle_div, tags);
+          return saveBookmarkTags(bookmarkUid, tags);
 
-      }).done(function(data){
-        _showTags(data);
-      });
+        }).done(function (tags) {
+          showAddTags(bookmark_tagsList_elem, tags);
+
+        }).done(function (){
+          apiTagsList = new TagsList(true);
+        });
     }
   };
 
-  // TODO: refactor 복잡함
-  var addTag = function (event, inputTagsName) {
-    var bookmark_taggle_div;
-    bookmark_taggle_div = $(event.path[3]).find("#bookmark_tagsList");
+  var showAddTags = function (elem, tags) {
+    var tagsList = new TagsList();
+    tagsList.setTagsList(JSON.parse(elem.val()));
+    tagsList.addTags(new Tags(tags.uid, tags.name));
 
-    getAddedTagsList(inputTagsName, bookmark_taggle_div);
+    elem.val(JSON.stringify(tagsList.getTagsList()));
   };
 
   var removeTag = function (event, tag) {
