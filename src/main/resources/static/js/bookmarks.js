@@ -1,6 +1,5 @@
 var bookmarks = function () {
-  // TODO: refactor naming이 중복됨
-  var apiTagsList = new TagsList(true);
+  var GlobalTagsList = new TagsList(true);
 
   var showBookmarks = function (data, _bindHbsBookmarks) {
     var bookmarks, template, html;
@@ -59,12 +58,12 @@ var bookmarks = function () {
   var addTag = function (event, inputTagName) {
     var bookmark_tagsList_elem = $(event.path[3]).find("#bookmark_tagsList");
 
-    if (apiTagsList.isExistTagsName(inputTagName)) {
-      var apiTags, bookmarkUid;
-      apiTags = apiTagsList.getTagsByTagsName(inputTagName);
+    if (GlobalTagsList.isExistTagsName(inputTagName)) {
+      var globalTags, bookmarkUid;
+      globalTags = GlobalTagsList.getTagsByTagsName(inputTagName);
       bookmarkUid = $(bookmark_tagsList_elem).data("bookmarkUid");
 
-      saveBookmarkTags(bookmarkUid, apiTags)
+      saveBookmarkTags(bookmarkUid, globalTags)
         .done(function (tags) {
           showAddTags(bookmark_tagsList_elem, tags);
         });
@@ -80,7 +79,7 @@ var bookmarks = function () {
           showAddTags(bookmark_tagsList_elem, tags);
 
         }).done(function (){
-          apiTagsList = new TagsList(true);
+          GlobalTagsList = new TagsList(true);
         });
     }
   };
