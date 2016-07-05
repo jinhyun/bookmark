@@ -40,12 +40,15 @@ var bookmarks = function () {
   };
 
   var getCentralTagsUidByName = function (inputTagsName) {
-    if (!$("#central_tags_list").val()) {
+    var centralTagsList, tagsUid, strCentralTagsList;
+
+    strCentralTagsList = $("#central_tags_list").val();
+
+    if (!strCentralTagsList) {
       return "";
     }
 
-    var centralTagsList, tagsUid;
-    centralTagsList = JSON.parse($("#central_tags_list").val());
+    centralTagsList = JSON.parse(strCentralTagsList);
 
     for (var i in centralTagsList) {
       if (centralTagsList[i].name == inputTagsName) {
@@ -95,11 +98,11 @@ var bookmarks = function () {
     contentsElem = $(".bookmarks_contents");
 
     contentsElem.html(html);
-    taggle($(".bookmark_taggle"));
+    bookmarksTaggle($(".bookmark_taggle"));
     contentsElem.show();
   };
 
-  var taggle = function (elem) {
+  var bookmarksTaggle = function (elem) {
     elem.tagit({
       availableTags: getCentralTagsList(),
       autocomplete: { delay: 0, minLength: 1 },
@@ -119,7 +122,7 @@ var bookmarks = function () {
     });
   };
 
-  var basicTaggle = function (elem) {
+  var addBookmarkTaggle = function (elem) {
     elem.tagit({
       availableTags: getCentralTagsList(),
       autocomplete: { delay: 0, minLength: 1 }
@@ -127,7 +130,7 @@ var bookmarks = function () {
   };
 
   var createAddBookmarkTaggle = function () {
-    basicTaggle($(".add_bookmark_taggle"));
+    addBookmarkTaggle($(".add_bookmark_taggle"));
   };
 
   var addTag = function (elem, tagsName) {
@@ -143,12 +146,12 @@ var bookmarks = function () {
       saveTags(tagsName)
         .done(function (tags) {
           return addCentralTagsList(tags);
-        })
-        .done(function (tags) {
+
+        }).done(function (tags) {
           saveBookmarkTags(bookmarkUid, tags.uid);
-        })
-        .done(function () {
-          taggle($(".bookmark_taggle"));
+
+        }).done(function () {
+          bookmarksTaggle($(".bookmark_taggle"));
         });
     }
   };
@@ -207,43 +210,46 @@ var bookmarks = function () {
     $(".add_bookmark_taggle").tagit("removeAll");
   };
 
-  var modalReadBookmark = function (el) {
-    var bookmarkUid = $(el).data("bookmarkUid");
+  var modalReadBookmark = function (elem) {
+    var bookmarkUid = $(elem).data("bookmarkUid");
+
     $.ajax({
       type: "GET",
-      url: "/api/bookmarks/" + bookmarkUid,
-      success: function (data) {
-        var template, html;
+      url: "/api/bookmarks/" + bookmarkUid
 
-        template = Handlebars.compile($("#hbs_bookmark_edit").html());
-        html = template(data);
+    }).done(function (data) {
+      showBookmarkEdit(data);
 
-        $(".modal_detail_content").html(html);
-
-        $("#btn_updateBookmark").click(function () {
-          updateBookmark(this);
-        });
-
-        $(".modal").show();
-      },
-      error: function () {
-
-      }
+    }).done(function () {
+      bindBookmarkEdit();
     });
   };
 
-  var deleteBookmark = function (el) {
-    var bookmarkUid = $(el).data("bookmarkUid");
+  var bindBookmarkEdit = function () {
+    $("#btn_updateBookmark").click(function () {
+      updateBookmark(this);
+    });
+  };
+
+  var showBookmarkEdit = function (data) {
+    var template, html;
+
+    template = Handlebars.compile($("#hbs_bookmark_edit").html());
+    html = template(data);
+
+    $(".modal_detail_content").html(html);
+    $(".modal").show();
+  };
+
+  var deleteBookmark = function (elem) {
+    var bookmarkUid = $(elem).data("bookmarkUid");
 
     $.ajax({
       type: "DELETE",
-      url: "/api/bookmarks/" + bookmarkUid,
-      success: function (data) {
-        bookmarks.readBookmarks();
-      },
-      error: function () {
+      url: "/api/bookmarks/" + bookmarkUid
 
-      }
+    }).done(function () {
+      readBookmarks();
     });
   };
 
@@ -258,15 +264,12 @@ var bookmarks = function () {
       type: "PATCH",
       url: "/api/bookmarks",
       data: JSON.stringify(bookmark),
-      contentType: "application/json",
-      success: function () {
-        readBookmarks();
-        $(".modal").hide();
-      },
-      error: function () {
+      contentType: "application/json"
 
-      }
-    })
+    }).done(function () {
+      $(".modal").hide();
+      readBookmarks();
+    });
   };
 
   var bindModal = function () {
@@ -328,6 +331,7 @@ var bookmarks = function () {
     });
   };
 
+  // TODO: refactor readBookmarks()
   var searchBookmark = function (_bindHbsBookmarks) {
     var inputSearch = $("#input_search").val();
 
@@ -337,12 +341,13 @@ var bookmarks = function () {
     } else {
       $.ajax({
         url: "/api/search/bookmarks/" + inputSearch,
-        type: "GET",
-        success: function (data) {
-          showBookmarks(data, _bindHbsBookmarks);
-        },
-        error: function () {
-        }
+        type: "GET"
+
+      }).done(function (data) {
+        showBookmarks(data);
+
+      }).done(function () {
+        bindHbsBookmarks();
       });
     }
   };
