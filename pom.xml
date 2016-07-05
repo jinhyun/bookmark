@@ -68,14 +68,6 @@
             <version>1.0.2</version>
         </dependency>
 
-
-        <!-- Taggle (https://github.com/okcoker/taggle.js)-->
-        <dependency>
-            <groupId>org.webjars.bower</groupId>
-            <artifactId>taggle</artifactId>
-            <version>1.7.1</version>
-        </dependency>
-
         <!-- h2 -->
         <dependency>
             <groupId>com.h2database</groupId>

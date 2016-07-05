@@ -2,6 +2,15 @@
     margin: 15px 10px 10px 10px;
 }
 
+.bookmarks_article {
+    margin-bottom: 10px;
+}
+
+.bookmark_taggle {
+    width: 350px;
+    margin: 0px;
+}
+
 .header {}
 
 .left {
@@ -11,6 +20,10 @@
 
 .clear {
     clear: both;
+}
+
+.hide {
+    display: none;
 }
 
 .add_bookmark {

@@ -5,13 +5,15 @@
     <title>bookmarks</title>
 
     <link rel="stylesheet" type="text/css" href="/css/bookmarks.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/taggle.css"/>
-    <!--<link rel="stylesheet" type="text/css" href="/css/srcTaggle.css"/>-->
+    <link rel="stylesheet" type="text/css" href="webjars/jquery-ui/1.11.4/jquery-ui.css"/>
+    <link rel="stylesheet" type="text/css" href="/tag-it/2.0/css/jquery.tagit.css"/>
 
     <script src="webjars/handlebars/4.0.5/handlebars.js"></script>
     <script src="webjars/jquery/3.0.0/jquery.js"></script>
+    <script src="webjars/jquery-ui/1.11.4/jquery-ui.js"></script>
     <script src="webjars/jquery-dateFormat/1.0.2/jquery-dateFormat.js"></script>
-    <script src="webjars/taggle/1.7.1/src/taggle.js"></script>
+
+    <script src="/tag-it/2.0/js/tag-it.js"></script>
 </head>
 <body>
     <div class="container">
@@ -32,17 +34,17 @@
                     <input type="text" id="input_desc" placeholder="Input a description"/>
                 </div>
 
-                <div class="left">
+                <div>
                     <button type="button" id="btn_add_bookmark">add</button>
-                </div>
-
-                <div class="input_taggle" id="input_taggle">
-                    <input type="hidden" id="input_tagsList"/>
                 </div>
             </div>
         </section>
 
-        <section class="bookmarks_contents clear"></section>
+        <section>
+            <input type="hidden" id="central_tags_list"/>
+        </section>
+
+        <section class="bookmarks_contents clear hide"></section>
 
         <section>
             <div class="modal">
@@ -64,7 +66,7 @@
 
     <script type="text/x-handlebars-template" id="hbs_bookmarks">
         {{#bookmarks}}
-        <article>
+        <article class="bookmarks_article">
             <div>
                 <a href="{{url}}" target="_blank">
                     {{#if description}}
@@ -77,8 +79,12 @@
                 | <a href="#" class="btn_update_bookmark" data-bookmark-uid="{{uid}}">update</a>
                 | <a href="#" class="btn_delete_bookmark" data-bookmark-uid="{{uid}}">delete</a>
             </div>
-            <div class="bookmark_taggle">
-                <input type="hidden" id="bookmark_tagsList" data-bookmark-uid="{{uid}}"/>
+            <div>
+                <ul class="bookmark_taggle" data-bookmark-uid="{{uid}}">
+                    {{#tagsList}}
+                        <li>{{name}}</li>
+                    {{/tagsList}}
+                </ul>
             </div>
         </article>
         {{/bookmarks}}
