@@ -14,7 +14,14 @@ var bookmarks = function () {
 
     }).done(function () {
       createAddBookmarkTaggle();
+
+    }).done(function () {
+      createSearchTagsListTaggle();
     });
+  };
+
+  var createSearchTagsListTaggle = function () {
+    addSearchTagsListTaggle($(".search_tagsList_taggle"));
   };
 
   var setCentralTagsList = function (inputTagsList) {
@@ -127,6 +134,40 @@ var bookmarks = function () {
       availableTags: getCentralTagsList(),
       autocomplete: { delay: 0, minLength: 1 }
     });
+  };
+
+  var readBookmarksByTagsName = function (inputTagsName) {
+    var tagsUidList = [];
+    var tagUid = getCentralTagsUidByName(inputTagsName);
+    tagsUidList.push(tagUid);
+
+    $.ajax({
+      type: "POST",
+      url: "/api/search/bookmarks/tags",
+      data: JSON.stringify(tagsUidList),
+      contentType: "application/json"
+
+    }).done(function (data) {
+      showBookmarks(data);
+
+    }).done(function () {
+      bindHbsBookmarks();
+    });
+  };
+
+  var addSearchTagsListTaggle = function (elem) {
+    elem.tagit({
+      readOnly: true,
+      onTagClicked: function(evt, ui) {
+        //console.log("onTagClicked: " + elem.tagit('tagLabel', ui.tag));
+        readBookmarksByTagsName(elem.tagit('tagLabel', ui.tag));
+      }
+    });
+
+    var tagsList = getCentralTagsList();
+    for (var i = 0; i < tagsList.length; i++) {
+      elem.tagit("createTag", tagsList[i]);
+    }
   };
 
   var createAddBookmarkTaggle = function () {

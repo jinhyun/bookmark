@@ -93,4 +93,8 @@ public class BookmarkService {
 
         return tags;
     }
+
+    public List<Bookmark> findBookmarksByTagsUid(List<Long> tagsUidList) {
+        return bookmarkRepository.findBookmarksByTagsUid(tagsUidList);
+    }
 }

@@ -17,47 +17,59 @@
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <div class="logo">
-                <span>bookmarks</span>
-            </div>
-            <div class="center">
-                <input type="text" placeholder="search a bookmark" id="input_search"/>
-                <button type="button" id="btn_search_bookmark">search</button>
-            </div>
-        </header>
-
-        <section>
-            <div class="add_bookmark">
-                <div class="left">
-                    <input type="text" id="input_url" placeholder="Input a url"/>
-                    <input type="text" id="input_desc" placeholder="Input a description"/>
+        <div class="header_div">
+            <header class="header">
+                <div class="logo">
+                    <span>bookmarks</span>
                 </div>
-
-                <div class="clear left">
-                    <ul class="add_bookmark_taggle"></ul>
+                <div class="center">
+                    <input type="text" placeholder="search a bookmark" id="input_search"/>
+                    <button type="button" id="btn_search_bookmark">search</button>
                 </div>
+            </header>
+        </div>
 
-                <div class="left">
-                    <button type="button" id="btn_add_bookmark" class="btn_add_bookmark">add</button>
+        <div class="add_bookmark_div">
+            <section>
+                <div class="add_bookmark">
+                    <div class="left">
+                        <input type="text" id="input_url" placeholder="Input a url"/>
+                        <input type="text" id="input_desc" placeholder="Input a description"/>
+                    </div>
+
+                    <div class="clear left">
+                        <ul class="add_bookmark_taggle"></ul>
+                    </div>
+
+                    <div class="left">
+                        <button type="button" id="btn_add_bookmark" class="btn_add_bookmark">add</button>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
-        <section class="clear">
-            <input type="hidden" id="central_tags_list"/>
-        </section>
+        <div class="main_contents_div clear left">
+            <section class="clear">
+                <input type="hidden" id="central_tags_list"/>
+            </section>
 
-        <section class="bookmarks_contents clear hide"></section>
+            <section class="bookmarks_contents clear hide"></section>
 
-        <section>
-            <div class="modal">
-                <div class="modal_content">
-                    <span class="modal_close">x</span>
-                    <p class="modal_detail_content"></p>
+            <section>
+                <div class="modal">
+                    <div class="modal_content">
+                        <span class="modal_close">x</span>
+                        <p class="modal_detail_content"></p>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
+
+        <div class="search_tagsList_div left">
+            <aside>
+                <ul class="search_tagsList_taggle"></ul>
+            </aside>
+        </div>
     </div>
 
     <script type="text/x-handlebars-template" id="hbs_bookmark_edit">

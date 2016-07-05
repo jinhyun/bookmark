@@ -57,4 +57,9 @@ public class BookmarkRestController {
     public Tags removeBookmarkTags(@PathVariable Long bookmarkUid, @PathVariable Long tagsUid) {
         return bookmarkTagsService.removeBookmarkTags(bookmarkUid, tagsUid);
     }
+
+    @PostMapping("/search/bookmarks/tags")
+    public List<Bookmark> findBookmarksByTagsUid(@RequestBody List<Long> tagsUidList) {
+        return bookmarkService.findBookmarksByTagsUid(tagsUidList);
+    }
 }
