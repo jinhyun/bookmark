@@ -20,6 +20,56 @@ var bookmarks = function () {
     $("#central_tags_list").val(tagsList);
   };
 
+  var addCentralTagsList = function (tags) {
+    var centralTagsList, centralTAgsListElem;
+
+    centralTagsList = [];
+    centralTAgsListElem = $("#central_tags_list");
+
+    if (centralTAgsListElem.val()) {
+      centralTagsList = JSON.parse(centralTAgsListElem.val());
+    }
+
+    centralTagsList.push(tags);
+    centralTAgsListElem.val(JSON.stringify(centralTagsList));
+
+    return tags;
+  };
+
+  var getCentralTagsUidByName = function (inputTagsName) {
+    if (!$("#central_tags_list").val()) {
+      return "";
+    }
+
+    var centralTagsList, tagsUid;
+    centralTagsList = JSON.parse($("#central_tags_list").val());
+
+    for (var i in centralTagsList) {
+      if (centralTagsList[i].name == inputTagsName) {
+        return tagsUid = centralTagsList[i].uid;
+      }
+    }
+
+    return "";
+  };
+
+  var getCentralTagsList = function () {
+    var strCentralTagsList, centralTagsListObj, centralTagsList;
+
+    strCentralTagsList = $("#central_tags_list").val();
+    centralTagsList = [];
+
+    if (strCentralTagsList) {
+      centralTagsListObj = JSON.parse(strCentralTagsList);
+
+      for (var i in centralTagsListObj){
+        centralTagsList.push(centralTagsListObj[i].name);
+      }
+    }
+
+    return centralTagsList;
+  };
+
   var readBookmarks = function () {
     $.ajax({
       type: "GET",
@@ -48,6 +98,8 @@ var bookmarks = function () {
 
   var taggle = function (elem) {
     elem.tagit({
+      availableTags: getCentralTagsList(),
+      autocomplete: { delay: 0, minLength: 1 },
       afterTagAdded: function(event, ui) {
         if (!ui.duringInitialization) {
           //console.log("afterTagAdded: " + elem.tagit('tagLabel', ui.tag));
@@ -80,24 +132,11 @@ var bookmarks = function () {
         })
         .done(function (tags) {
           saveBookmarkTags(bookmarkUid, tags.uid);
+        })
+        .done(function () {
+          taggle($(".bookmark_taggle"));
         });
     }
-  };
-
-  var addCentralTagsList = function (tags) {
-    var centralTagsList, centralTAgsListElem;
-
-    centralTagsList = [];
-    centralTAgsListElem = $("#central_tags_list");
-
-    if (centralTAgsListElem.val()) {
-      centralTagsList = JSON.parse(centralTAgsListElem.val());
-    }
-
-    centralTagsList.push(tags);
-    centralTAgsListElem.val(JSON.stringify(centralTagsList));
-
-    return tags;
   };
 
   var removeTag = function (elem, tagName) {
@@ -129,23 +168,6 @@ var bookmarks = function () {
       data: JSON.stringify(tags),
       contentType: "application/json"
     });
-  };
-
-  var getCentralTagsUidByName = function (inputTagsName) {
-    if (!$("#central_tags_list").val()) {
-      return "";
-    }
-
-    var centralTagsList, tagsUid;
-    centralTagsList = JSON.parse($("#central_tags_list").val());
-
-    for (var i in centralTagsList) {
-      if (centralTagsList[i].name == inputTagsName) {
-        return tagsUid = centralTagsList[i].uid;
-      }
-    }
-
-    return "";
   };
 
   var deleteBookmarkTags = function (bookmarkUid, tagsUid) {
