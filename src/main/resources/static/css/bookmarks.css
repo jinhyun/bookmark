@@ -11,11 +11,25 @@
     margin: 0px;
 }
 
+.logo {
+    float: left;
+    margin-right: 20px;
+}
+
+.add_bookmark_taggle {
+    width: 350px;
+    margin: 5px 0px 0px 0px;
+}
+
+.btn_add_bookmark {
+    margin: 5px 0px 0px 0px;
+}
+
 .header {}
 
 .left {
     float: left;
-    margin-right: 20px;
+    margin-right: 5px;
 }
 
 .clear {

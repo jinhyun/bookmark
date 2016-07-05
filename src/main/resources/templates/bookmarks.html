@@ -18,7 +18,7 @@
 <body>
     <div class="container">
         <header class="header">
-            <div class="left">
+            <div class="logo">
                 <span>bookmarks</span>
             </div>
             <div class="center">
@@ -34,13 +34,17 @@
                     <input type="text" id="input_desc" placeholder="Input a description"/>
                 </div>
 
-                <div>
-                    <button type="button" id="btn_add_bookmark">add</button>
+                <div class="clear left">
+                    <ul class="add_bookmark_taggle"></ul>
+                </div>
+
+                <div class="left">
+                    <button type="button" id="btn_add_bookmark" class="btn_add_bookmark">add</button>
                 </div>
             </div>
         </section>
 
-        <section>
+        <section class="clear">
             <input type="hidden" id="central_tags_list"/>
         </section>
 
