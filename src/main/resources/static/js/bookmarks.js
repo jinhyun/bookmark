@@ -332,10 +332,10 @@ var bookmarks = function () {
   };
 
   // TODO: refactor readBookmarks()
-  var searchBookmark = function (_bindHbsBookmarks) {
+  var searchBookmark = function () {
     var inputSearch = $("#input_search").val();
 
-    if (inputSearch == '') {
+    if (!inputSearch) {
       readBookmarks();
 
     } else {
