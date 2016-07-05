@@ -24,7 +24,7 @@ public class BookmarkService {
         return bookmarkRepository.findAllWithTags();
     }
 
-    public Bookmark saveBookmark(Bookmark inputBookmark) {
+    public Bookmark addBookmark(Bookmark inputBookmark) {
         if (inputBookmark.getBookmarkTagsList().size() == 0) {
             return bookmarkRepository.save(inputBookmark);
 
@@ -69,7 +69,7 @@ public class BookmarkService {
         return bookmarkRepository.saveAndFlush(bookmark);
     }
 
-    public void deleteBookmark(Long bookmarkUid) {
+    public void removeBookmark(Long bookmarkUid) {
         bookmarkRepository.delete(bookmarkUid);
     }
 
@@ -79,7 +79,7 @@ public class BookmarkService {
         return bookmarkRepository.findByUrlContainingOrDescriptionContaining(url, description);
     }
 
-    public Tags saveBookmarkTags(Long bookmarkUid, Tags inputTags) {
+    public Tags addBookmarkTags(Long bookmarkUid, Tags inputTags) {
         Bookmark bookmark = this.getBookmark(bookmarkUid);
         Tags tags = tagsService.getTags(inputTags.getUid());
 

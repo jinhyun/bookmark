@@ -29,8 +29,8 @@ public class BookmarkRestController {
     }
 
     @PostMapping("/bookmarks")
-    public Bookmark createBookmark(@RequestBody Bookmark bookmark) {
-        return bookmarkService.saveBookmark(bookmark);
+    public Bookmark addBookmark(@RequestBody Bookmark bookmark) {
+        return bookmarkService.addBookmark(bookmark);
     }
 
     @PatchMapping("/bookmarks")
@@ -39,8 +39,8 @@ public class BookmarkRestController {
     }
 
     @DeleteMapping("/bookmarks/{bookmarkUid}")
-    public void deleteBookmark(@PathVariable Long bookmarkUid){
-        bookmarkService.deleteBookmark(bookmarkUid);
+    public void removeBookmark(@PathVariable Long bookmarkUid){
+        bookmarkService.removeBookmark(bookmarkUid);
     }
 
     @GetMapping("/search/bookmarks/{contents}")
@@ -48,14 +48,13 @@ public class BookmarkRestController {
         return bookmarkService.findAllBookmarks(contents);
     }
 
-    // TODO: refactor create/save > add
     @PostMapping("/bookmarks/{bookmarkUid}/tags")
-    public Tags createBookmarkTags (@PathVariable Long bookmarkUid, @RequestBody Tags tags) {
-        return bookmarkService.saveBookmarkTags(bookmarkUid, tags);
+    public Tags addBookmarkTags(@PathVariable Long bookmarkUid, @RequestBody Tags tags) {
+        return bookmarkService.addBookmarkTags(bookmarkUid, tags);
     }
 
     @DeleteMapping("/bookmarks/{bookmarkUid}/tags/{tagsUid}")
-    public Tags deleteBookmarkTags (@PathVariable Long bookmarkUid, @PathVariable Long tagsUid) {
-        return bookmarkTagsService.deleteBookmarkTags(bookmarkUid, tagsUid);
+    public Tags removeBookmarkTags(@PathVariable Long bookmarkUid, @PathVariable Long tagsUid) {
+        return bookmarkTagsService.removeBookmarkTags(bookmarkUid, tagsUid);
     }
 }

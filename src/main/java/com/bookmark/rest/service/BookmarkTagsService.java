@@ -24,7 +24,7 @@ public class BookmarkTagsService {
         return bookmarkTagsRepository.findByBookmarkAndTags(bookmark, tags);
     }
 
-    public Tags deleteBookmarkTags(Long bookmarkUid, Long inputTags) {
+    public Tags removeBookmarkTags(Long bookmarkUid, Long inputTags) {
         Bookmark bookmark = bookmarkService.getBookmark(bookmarkUid);
         Tags tags = tagsService.getTags(inputTags);
         BookmarkTags bookmarkTags = this.getBookmarkTagsByBookmarkAndTags(bookmark, tags);
