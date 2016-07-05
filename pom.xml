@@ -54,13 +54,6 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- Jquery-Ui -->
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>jquery-ui</artifactId>
-            <version>1.11.4</version>
-        </dependency>
-
         <!-- Jquery DateFormat (https://github.com/phstc/jquery-dateFormat) -->
         <dependency>
             <groupId>org.webjars</groupId>
