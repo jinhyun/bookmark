@@ -136,10 +136,33 @@ var bookmarks = function () {
     });
   };
 
-  var readBookmarksByTagsName = function (inputTagsName) {
-    var tagsUidList = [];
-    var tagUid = getCentralTagsUidByName(inputTagsName);
-    tagsUidList.push(tagUid);
+  var readBookmarksByTagsName = function (selectedTagElem, inputTagsName) {
+    var inputTagsUid, searchTagsUidListElem, strTagsUidList, tagsUidList, toggleElem, isAddTags;
+
+    toggleElem = $(selectedTagElem.tag).toggleClass("checked");
+    searchTagsUidListElem = $("#search_tagsUidList");
+
+    isAddTags = (toggleElem.hasClass("checked")) ? true : false;
+    inputTagsUid = getCentralTagsUidByName(inputTagsName);
+    strTagsUidList = searchTagsUidListElem.val();
+    tagsUidList = [];
+
+    if (strTagsUidList) {
+      tagsUidList = JSON.parse(strTagsUidList);
+    }
+
+    if (isAddTags) {
+      tagsUidList.push(inputTagsUid);
+
+    } else {
+      for (var i = 0; i < tagsUidList.length; i++){
+        if (inputTagsUid == tagsUidList[i]) {
+          tagsUidList.splice([i], 1);
+        }
+      }
+    }
+
+    searchTagsUidListElem.val(JSON.stringify(tagsUidList));
 
     $.ajax({
       type: "POST",
@@ -160,7 +183,7 @@ var bookmarks = function () {
       readOnly: true,
       onTagClicked: function(evt, ui) {
         //console.log("onTagClicked: " + elem.tagit('tagLabel', ui.tag));
-        readBookmarksByTagsName(elem.tagit('tagLabel', ui.tag));
+        readBookmarksByTagsName(ui, elem.tagit('tagLabel', ui.tag));
       }
     });
 

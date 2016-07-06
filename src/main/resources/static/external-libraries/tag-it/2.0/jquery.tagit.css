@@ -20,6 +20,9 @@ ul.tagit li.tagit-choice {
     position: relative;
     line-height: inherit;
 }
+ul.tagit li.tagit-choice.checked {
+    background: yellow;
+}
 input.tagit-hidden-field {
     display: none;
 }
