@@ -85,10 +85,16 @@
         {{#bookmarks}}
         <article class="bookmarks_article">
             <div>
+                <!-- 출력 우선 순위
+                    1. description
+                    2. title
+                    3. url -->
                 <a href="{{url}}" target="_blank">
                     {{#if description}}
                         {{description}}
-                    {{else}}
+                    {{else if title}}
+                        {{title}}
+                    {{else if url}}
                         {{url}}
                     {{/if}}
                 </a>

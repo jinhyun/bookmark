@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -22,11 +22,16 @@ public class BookmarkService {
     @Autowired
     private TagsService tagsService;
 
+    @Autowired
+    private LinkService linkService;
+
     public List<Bookmark> getBookmarks() {
         return bookmarkRepository.findAllWithTags();
     }
 
     public Bookmark addBookmark(Bookmark inputBookmark) {
+        inputBookmark.setTitle(linkService.getTitle(inputBookmark.getUrl()));
+
         if (inputBookmark.getBookmarkTagsList().size() == 0) {
             return bookmarkRepository.save(inputBookmark);
 

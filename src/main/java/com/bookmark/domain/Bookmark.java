@@ -20,6 +20,9 @@ public class Bookmark {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "TITLE")
+    private String title;
+
     @Column(name = "REG_DATE")
     @Temporal(TemporalType.TIMESTAMP)
     private Date regDate;
@@ -42,6 +45,14 @@ public class Bookmark {
     @OneToMany(mappedBy = "bookmark", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
     private List<BookmarkTags> bookmarkTagsList = new ArrayList<>();
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public List<BookmarkTags> getBookmarkTagsList() {
         return bookmarkTagsList;
