@@ -420,6 +420,39 @@ var bookmarks = function () {
     $("#btn_search_bookmark").click(function () {
       searchBookmark(bindHbsBookmarks);
     });
+
+    $("#btn_modal_load_bookmark").click(function () {
+      modalLoadBookmarkFile();
+    });
+  };
+
+  var modalLoadBookmarkFile = function () {
+    var template, html;
+
+    template = Handlebars.compile($("#hbs_load_bookmark_file").html());
+    html = template();
+
+    $(".modal_detail_content").html(html);
+    $(".modal").show();
+
+    $("#btn_load_bookmark_file").click(function () {
+      loadBookmarkFile();
+    });
+  };
+
+  var loadBookmarkFile = function () {
+    var bookmarkFilePath = $("#bookmark_file_path").val();
+
+    $.ajax({
+      type: "POST",
+      url: "/parser/bookmarks",
+      data: { filePathName: bookmarkFilePath }
+
+    }).done(function (data) {
+      alert(data);
+      $(".modal").hide();
+      readBookmarks();
+    });
   };
 
   return {
