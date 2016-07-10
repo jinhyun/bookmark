@@ -16,63 +16,52 @@
     <script src="/external-libraries/tag-it/2.0/tag-it.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header_div">
-            <header class="header">
-                <div class="logo">
-                    <span>bookmarks</span>
-                </div>
-                <div class="center">
-                    <input type="text" placeholder="search a bookmark" id="input_search"/>
-                    <button type="button" id="btn_search_bookmark">search</button>
-                    <button type="button" id="btn_modal_load_bookmark" class="btn_modal_load_bookmark">Load Bookmark File</button>
-                </div>
-            </header>
+    <header role="banner">
+        <div class="logo">
+            <h2>Bookmarks</h2>
         </div>
 
-        <div class="add_bookmark_div">
-            <section>
-                <div class="add_bookmark">
-                    <div class="left">
-                        <input type="text" id="input_url" placeholder="Input a url"/>
-                        <input type="text" id="input_desc" placeholder="Input a description"/>
-                    </div>
+        <form class="search_bookmark">
+            <input type="text" placeholder="search a bookmark" id="input_search"/>
+            <button type="button" id="btn_search_bookmark">search</button>
+        </form>
 
-                    <div class="clear left">
-                        <ul class="add_bookmark_taggle"></ul>
-                    </div>
+        <aside class="config">
+            <button type="button" id="btn_modal_load_bookmark" class="btn_modal_load_bookmark">Load Bookmark File</button>
+        </aside>
 
-                    <div class="left">
-                        <button type="button" id="btn_add_bookmark" class="btn_add_bookmark">add</button>
-                    </div>
+        <input type="hidden" id="central_tags_list"/>
+    </header>
+
+    <aside class="tags">
+        <input type="hidden" id="search_tagsUidList"/>
+        <ul class="search_tagsList_taggle"></ul>
+    </aside>
+
+    <main class="main">
+        <form class="add_bookmark_div">
+            <input type="text" id="input_url" placeholder="Input a url"/>
+            <input type="text" id="input_desc" placeholder="Input a description"/>
+
+            <ul class="add_bookmark_taggle"></ul>
+            <button type="button" id="btn_add_bookmark" class="btn_add_bookmark">Add</button>
+        </form>
+
+        <hr/>
+
+        <section>
+            <div class="bookmarks">
+                <!-- bookmarks_article -->
+            </div>
+
+            <div class="modal">
+                <div class="modal_content">
+                    <span class="modal_close">x</span>
+                    <p class="modal_detail_content"></p>
                 </div>
-            </section>
-        </div>
-
-        <div class="main_contents_div clear left">
-            <section class="clear">
-                <input type="hidden" id="central_tags_list"/>
-            </section>
-
-            <section class="bookmarks_contents clear hide"></section>
-
-            <section>
-                <div class="modal">
-                    <div class="modal_content">
-                        <span class="modal_close">x</span>
-                        <p class="modal_detail_content"></p>
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="search_tagsList_div left">
-            <aside>
-                <input type="hidden" id="search_tagsUidList"/>
-                <ul class="search_tagsList_taggle"></ul>
-            </aside>
-        </div>
-    </div>
+            </div>
+        </section>
+    </main>
 
     <script type="text/x-handlebars-template" id="hbs_load_bookmark_file">
         <div>

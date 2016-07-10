@@ -102,7 +102,7 @@ var bookmarks = function () {
     bookmarks = { "bookmarks" : data };
     template = Handlebars.compile($("#hbs_bookmarks").html());
     html = template(bookmarks);
-    contentsElem = $(".bookmarks_contents");
+    contentsElem = $(".bookmarks");
 
     contentsElem.html(html);
     bookmarksTaggle($(".bookmark_taggle"));

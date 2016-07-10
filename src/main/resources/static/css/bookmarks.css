@@ -1,5 +1,45 @@
-.container {
-    margin: 15px 10px 10px 10px;
+body {
+    margin: 0;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 12px 150px 12px 0;
+}
+
+header[role="banner"]{
+    background:#393939;
+    height: 70px;
+    width: 100%;
+    color: #B7C4CE;
+}
+
+.tags {
+    clear: both;
+    float: left;
+    width: 170px;
+    margin: 0 5px 0 5px;
+}
+
+.main {
+    margin: 12px 0 0 183px;
+    overflow: hidden
+}
+
+.logo {
+    float: left;
+    margin: 0 10px 0 10px;
+}
+
+.search_bookmark {
+    float: left;
+    margin: 24px 0 0 45px;
+}
+
+.config {
+    float: right;
+    margin: 24px 150px 0 0;
 }
 
 .bookmarks_article {
@@ -8,56 +48,28 @@
 
 .bookmark_taggle {
     width: 350px;
-    margin: 0px;
-}
-
-.btn_modal_load_bookmark {
-    margin-left: 100px;
-}
-
-.search_tagsList_div {
-    margin-left: 200px;
+    margin: 0;
 }
 
 .search_tagsList_taggle {
-    width: 500px;
+    width: 150px;
 }
 
-.logo {
-    float: left;
-    margin-right: 20px;
+.bookmarks_contents {
+    margin-top: 10px;
 }
 
 .add_bookmark_taggle {
     width: 350px;
-    margin: 5px 0px 0px 0px;
+    margin: 5px 0 0 0;
 }
 
 .btn_add_bookmark {
-    margin: 5px 0px 0px 0px;
-}
-
-.header {}
-
-.left {
-    float: left;
-    margin-right: 5px;
-}
-
-.clear {
-    clear: both;
+    margin: 5px 0 0 0;
 }
 
 .hide {
     display: none;
-}
-
-.add_bookmark {
-    margin-top: 10px;
-}
-
-.bookmarks_contents {
-    margin-top: 20px;
 }
 
 .modal {
