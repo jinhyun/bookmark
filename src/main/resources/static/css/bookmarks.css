@@ -5,7 +5,7 @@ body {
 hr {
     border: 0;
     border-top: 1px solid #ccc;
-    margin: 12px 150px 12px 0;
+    margin: 10px 0 10px 0;
 }
 
 header[role="banner"]{
@@ -23,23 +23,31 @@ header[role="banner"]{
 }
 
 .main {
-    margin: 12px 0 0 183px;
-    overflow: hidden
+    margin: 12px 90px 0 183px;
+    overflow: hidden;
+}
+
+.ui.form .fields {
+    margin-bottom: 0;
 }
 
 .logo {
     float: left;
-    margin: 0 10px 0 10px;
+    margin: 20px 10px 0 10px;
 }
 
 .search_bookmark {
     float: left;
-    margin: 24px 0 0 45px;
+    margin: 20px 0 0 45px;
 }
 
 .config {
     float: right;
-    margin: 24px 150px 0 0;
+    margin: 18px 150px 0 0;
+}
+
+.add_bookmark_form {
+    /*width: 600px;*/
 }
 
 .bookmarks_article {
@@ -47,7 +55,7 @@ header[role="banner"]{
 }
 
 .bookmark_taggle {
-    width: 350px;
+    width: 250px;
     margin: 0;
 }
 
@@ -65,7 +73,7 @@ header[role="banner"]{
 }
 
 .btn_add_bookmark {
-    margin: 5px 0 0 0;
+    margin: 10px 0 0 0;
 }
 
 .hide {

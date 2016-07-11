@@ -93,6 +93,7 @@ var bookmarks = function () {
 
     }).done(function () {
       bindHbsBookmarks();
+      $('.table').tablesort();
     });
   };
 
@@ -423,6 +424,16 @@ var bookmarks = function () {
 
     $("#btn_modal_load_bookmark").click(function () {
       modalLoadBookmarkFile();
+    });
+
+    $(".search_bookmark").keypress(function( event ) {
+      if ( event.which == 13 ) {
+        searchBookmark(bindHbsBookmarks);
+      }
+    });
+
+    $(".input_search_delete").click(function () {
+      $("#input_search").val("");
     });
   };
 
