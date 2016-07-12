@@ -15,16 +15,23 @@ header[role="banner"]{
     color: #B7C4CE;
 }
 
+.bookmarks_tags_label > .ui.label {
+    margin-bottom: 5px;
+}
+
 .tags {
     clear: both;
     float: left;
+    /*width: 250px;*/
     width: 170px;
-    margin: 0 5px 0 5px;
+    margin: 12px 5px 0 5px;
 }
 
 .main {
+    /*margin: 12px 90px 0 253px;*/
     margin: 12px 90px 0 183px;
     overflow: hidden;
+    height: 100%;
 }
 
 .ui.form .fields {

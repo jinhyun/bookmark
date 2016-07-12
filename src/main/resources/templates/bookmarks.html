@@ -39,35 +39,76 @@
                 </button>
             </div>
         </aside>
-
-        <input type="hidden" id="central_tags_list"/>
     </header>
+
+    <div class="hidden_common_data">
+        <input type="hidden" id="central_tags_list_json" size="150"/>
+        <div class="hide central_tags_list"></div>
+    </div>
+
+    <script type="text/x-handlebars-template" id="hbs_central_tags_list">
+        {{#tagsList}}
+            <div data-value="{{uid}}">{{name}}</div>
+        {{/tagsList}}
+    </script>
 
     <aside class="tags">
         <input type="hidden" id="search_tagsUidList"/>
-        <ul class="search_tagsList_taggle"></ul>
+        <!--<ul class="search_tagsList_taggle"></ul>-->
+        <div class="search_tagsList"></div>
     </aside>
 
     <main class="main">
-        <form class="add_bookmark_form ui form">
-            <div class="fields">
-                <div class="nine wide field">
-                    <input type="text" id="input_url" placeholder="Input a url"/>
-                </div>
-                <div class="seven wide field">
-                    <input type="text" id="input_desc" placeholder="Input a description"/>
+        <div class="add_bookmark_modal ui modal" style="height: 80%">
+            <div class="header">
+                Add Bookmark
+            </div>
+            <div class="content">
+                <form class="add_bookmark_form ui form">
+                    <div class="required field">
+                        <label>Url</label>
+                        <input type="text" id="input_url" placeholder="http://www.bookmark.com"/>
+                    </div>
+                    <div class="field">
+                        <label>Description</label>
+                        <input type="text" id="input_desc" placeholder="Bookmark - Web Application"/>
+                    </div>
+                    <div class="field">
+                        <label>Tags</label>
+                        <div class="input_tags_dropdown">
+                            <div class="ui fluid multiple search selection dropdown">
+                                <input name="tags" type="hidden" value=""/>
+                                <i class="dropdown icon"></i>
+                                <div class="default text">tags</div>
+                                <div class="menu">
+                                    <!-- format -->
+                                    <!--<div class="item" data-value="{{uid}}">{{name}}</div>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="actions" style="margin-top: 180px">
+                <button type="button" id="btn_add_bookmark" class="btn_add_bookmark ui primary left labeled icon button">
+                    Add Bookmark
+                    <i class="checkmark icon"></i>
+                </button>
+                <div class="ui black deny button">
+                    Cancel
                 </div>
             </div>
+        </div>
 
-            <div class="fields">
-                <div class="field">
-                    <ul class="add_bookmark_taggle ui"></ul>
-                </div>
-                <div class="btn_add_bookmark">
-                    <button type="button" id="btn_add_bookmark" class="ui small inverted brown button">Add Bookmark</button>
-                </div>
-            </div>
-        </form>
+        <div>
+            <button class="btn_modal_add_bookmark ui icon button">
+                <i class="write icon"></i>
+            </button>
+            <button class="btn_edit_read_tags ui icon button">
+                <i class="tags icon"></i>|
+                <i class="edit icon"></i>
+            </button>
+        </div>
 
         <hr/>
 
@@ -106,8 +147,8 @@
             <table class="ui sortable celled very compact table">
                 <thead>
                     <tr>
-                        <th class="nine wide">Name</th>
-                        <th class="four wide">Tags</th>
+                        <th class="eight wide">Name</th>
+                        <th class="five wide">Tags</th>
                         <th class="two wide">Date</th>
                         <th class="one wide">Func</th>
                     </tr>
@@ -115,7 +156,7 @@
                 <tbody>
                 {{#bookmarks}}
                     <tr>
-                        <td>
+                        <td class="selectable">
                             <a href="{{url}}" target="_blank">
                                 {{#if description}}
                                     {{description}}
@@ -127,11 +168,22 @@
                             </a>
                         </td>
                         <td>
-                            <ul class="bookmark_taggle" data-bookmark-uid="{{uid}}" style="border: 0">
+                            <div class="bookmarks_tags_label">
                                 {{#tagsList}}
-                                <li>{{name}}</li>
+                                    <div class="ui small label" data-value="{{uid}}">{{name}}</div>
                                 {{/tagsList}}
-                            </ul>
+                            </div>
+                            <div class="bookmarks_tags_dropdown hide">
+                                <div class="ui fluid multiple search selection mini dropdown" data-bookmark-uid="{{uid}}">
+                                    <input name="tags" type="hidden" value="{{#tagsList}}{{uid}}{{#unless @last}},{{/unless}}{{/tagsList}}"/>
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">tags</div>
+                                    <div class="menu">
+                                        <!-- format -->
+                                        <!--<div class="item" data-value="{{uid}}">{{name}}</div>-->
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                         <td style="font-size: 7pt; padding: 4px;">{{dateformat regDate}}</td>
                         <td>

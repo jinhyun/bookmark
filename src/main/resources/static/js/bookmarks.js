@@ -11,37 +11,52 @@ var bookmarks = function () {
 
     }).done(function (tagsList) {
       setCentralTagsList(tagsList);
+      createDivCentralTagsList(tagsList);
 
     }).done(function () {
       createAddBookmarkTaggle();
-
-    }).done(function () {
-      createSearchTagsListTaggle();
     });
   };
 
-  var createSearchTagsListTaggle = function () {
-    addSearchTagsListTaggle($(".search_tagsList_taggle"));
+  var createDivCentralTagsList = function (inputTagsList) {
+    var tagsList, template, html, contentsElem;
+
+    tagsList = { "tagsList" : inputTagsList };
+    template = Handlebars.compile($("#hbs_central_tags_list").html());
+    html = template(tagsList);
+    contentsElem = $(".central_tags_list");
+
+    contentsElem.html(html);
+  };
+
+  var addDivCentralTagsList = function (tags) {
+    var tagsList, template, html, contentsElem;
+
+    tagsList = { "tagsList" : tags };
+    template = Handlebars.compile($("#hbs_central_tags_list").html());
+    html = template(tagsList);
+    contentsElem = $(".central_tags_list");
+    contentsElem.append(html);
   };
 
   var setCentralTagsList = function (inputTagsList) {
     var tagsList = (inputTagsList) ? JSON.stringify(inputTagsList) : "";
 
-    $("#central_tags_list").val(tagsList);
+    $("#central_tags_list_json").val(tagsList);
   };
 
   var addCentralTagsList = function (tags) {
-    var centralTagsList, centralTAgsListElem;
+    var centralTagsList, centralTagsListElem;
 
     centralTagsList = [];
-    centralTAgsListElem = $("#central_tags_list");
+    centralTagsListElem = $("#central_tags_list_json");
 
-    if (centralTAgsListElem.val()) {
-      centralTagsList = JSON.parse(centralTAgsListElem.val());
+    if (centralTagsListElem.val()) {
+      centralTagsList = JSON.parse(centralTagsListElem.val());
     }
 
     centralTagsList.push(tags);
-    centralTAgsListElem.val(JSON.stringify(centralTagsList));
+    centralTagsListElem.val(JSON.stringify(centralTagsList));
 
     return tags;
   };
@@ -49,7 +64,7 @@ var bookmarks = function () {
   var getCentralTagsUidByName = function (inputTagsName) {
     var centralTagsList, tagsUid, strCentralTagsList;
 
-    strCentralTagsList = $("#central_tags_list").val();
+    strCentralTagsList = $("#central_tags_list_json").val();
 
     if (!strCentralTagsList) {
       return "";
@@ -66,10 +81,31 @@ var bookmarks = function () {
     return "";
   };
 
+  // TODO: delete - getCentralTagsUidByName
+  var getCentralTagsByName = function (inputTagsName) {
+    var centralTagsList, tags, strCentralTagsList;
+
+    strCentralTagsList = $("#central_tags_list_json").val();
+
+    if (!strCentralTagsList) {
+      return "";
+    }
+
+    centralTagsList = JSON.parse(strCentralTagsList);
+
+    for (var i in centralTagsList) {
+      if (centralTagsList[i].name == inputTagsName) {
+        return tags = centralTagsList[i];
+      }
+    }
+
+    return "";
+  };
+
   var getCentralTagsList = function () {
     var strCentralTagsList, centralTagsListObj, centralTagsList;
 
-    strCentralTagsList = $("#central_tags_list").val();
+    strCentralTagsList = $("#central_tags_list_json").val();
     centralTagsList = [];
 
     if (strCentralTagsList) {
@@ -92,7 +128,11 @@ var bookmarks = function () {
       showBookmarks(data);
 
     }).done(function () {
+      setBookmarksTagsFromCentralTags();
       bindHbsBookmarks();
+
+    }).done(function( ) {
+      bindDropdown();
       $('.table').tablesort();
     });
   };
@@ -110,16 +150,75 @@ var bookmarks = function () {
     contentsElem.show();
   };
 
+  var removeBookmarksTagsLabel = function (elem, tagsName) {
+    var labelElem = $(elem).parent().parent().find(".bookmarks_tags_label").children();
+
+    for (var i = 0; i < labelElem.length; i++) {
+      if ($(labelElem[i]).text() == tagsName) {
+        $(labelElem[i]).remove();
+      }
+    }
+  };
+
+  var setBookmarksTagsLabel = function (elem , tags) {
+    var labelElem, addElem;
+
+    labelElem = $(elem).parent().parent().find(".bookmarks_tags_label");
+    addElem = "<div class='ui small label' style='margin-bottom: 5px' data-value='"+tags.uid+"'>"+tags.name+"</div>";
+
+    labelElem.append(addElem);
+  };
+
+  var setBookmarksTagsFromCentralTags = function () {
+    var menu, centralTagsElem, centralTagsChildElem;
+
+    menu = $(".bookmarks_tags_dropdown").find(".menu");
+    centralTagsElem = $(".central_tags_list");
+    centralTagsChildElem = $(".central_tags_list").children();
+
+    for (var i = 0; i < centralTagsChildElem.length; i++) {
+      $(centralTagsChildElem[i]).addClass("item");
+    }
+
+    for (var j = 0; j < menu.length; j++) {
+      $(menu[j]).html(centralTagsElem.html());
+    }
+  };
+
+  var setInputTagsFromCentralTags = function () {
+    var menu, centralTagsElem;
+
+    menu = $(".input_tags_dropdown").find(".menu");
+    centralTagsElem = $(".central_tags_list");
+
+    for (var j = 0; j < menu.length; j ++) {
+      $(menu[j]).html(centralTagsElem.html());
+    }
+
+    $('.input_tags_dropdown > .ui.dropdown').dropdown({
+      allowAdditions: true
+    });
+  };
+
+  var bindDropdown = function () {
+    $('.bookmarks_tags_dropdown > .ui.dropdown').dropdown({
+      allowAdditions: true,
+
+      onAdd: function(value, text) {
+        addTag(this, text);
+      },
+
+      onRemove: function (value, text) {
+        removeTag(this, text);
+        removeBookmarksTagsLabel(this, text);
+      }
+    });
+  };
+
   var bookmarksTaggle = function (elem) {
     elem.tagit({
       availableTags: getCentralTagsList(),
       autocomplete: { delay: 0, minLength: 1 },
-      afterTagAdded: function(event, ui) {
-        if (!ui.duringInitialization) {
-          //console.log("afterTagAdded: " + elem.tagit('tagLabel', ui.tag));
-          addTag(this, elem.tagit('tagLabel', ui.tag));
-        }
-      },
       onTagClicked: function(evt, ui) {
         //console.log("onTagClicked: " + elem.tagit('tagLabel', ui.tag));
       },
@@ -179,55 +278,41 @@ var bookmarks = function () {
     });
   };
 
-  var addSearchTagsListTaggle = function (elem) {
-    elem.tagit({
-      readOnly: true,
-      onTagClicked: function(evt, ui) {
-        //console.log("onTagClicked: " + elem.tagit('tagLabel', ui.tag));
-        readBookmarksByTagsName(ui, elem.tagit('tagLabel', ui.tag));
-      }
-    });
-
-    var tagsList = getCentralTagsList();
-    for (var i = 0; i < tagsList.length; i++) {
-      elem.tagit("createTag", tagsList[i]);
-    }
-  };
-
   var createAddBookmarkTaggle = function () {
     addBookmarkTaggle($(".add_bookmark_taggle"));
   };
 
   var addTag = function (elem, tagsName) {
-    var centralTagsUid, bookmarkUid;
+    var bookmarkUid, centralTags;
 
-    centralTagsUid = getCentralTagsUidByName(tagsName);
+    centralTags = getCentralTagsByName(tagsName);
     bookmarkUid = $(elem).data("bookmarkUid");
 
-    if (centralTagsUid) {
-      saveBookmarkTags(bookmarkUid, centralTagsUid);
+    if (centralTags.uid) {
+      saveBookmarkTags(bookmarkUid, centralTags.uid);
+      setBookmarksTagsLabel(elem, centralTags);
 
     } else {
       saveTags(tagsName)
         .done(function (tags) {
+          addDivCentralTagsList(tags);
           return addCentralTagsList(tags);
 
         }).done(function (tags) {
+          setBookmarksTagsFromCentralTags();
+          setBookmarksTagsLabel(elem, tags);
           saveBookmarkTags(bookmarkUid, tags.uid);
-
-        }).done(function () {
-          bookmarksTaggle($(".bookmark_taggle"));
         });
     }
   };
 
   var removeTag = function (elem, tagName) {
-    var centralTagsUid, bookmarkUid;
+    var centralTags, bookmarkUid;
 
-    centralTagsUid = getCentralTagsUidByName(tagName);
+    centralTags = getCentralTagsByName(tagName);
     bookmarkUid = $(elem).data("bookmarkUid");
 
-    deleteBookmarkTags(bookmarkUid, centralTagsUid);
+    deleteBookmarkTags(bookmarkUid, centralTags.uid);
   };
 
   var saveTags = function (tagsName) {
@@ -390,6 +475,18 @@ var bookmarks = function () {
     });
   };
 
+  var bindBtn = function () {
+    $(".btn_modal_add_bookmark").click(function () {
+      $('.add_bookmark_modal').modal('show');
+      setInputTagsFromCentralTags();
+    });
+
+    $(".btn_edit_read_tags").click(function () {
+      $('.bookmarks_tags_label').toggleClass("hide");
+      $('.bookmarks_tags_dropdown').toggleClass("hide");
+    });
+  };
+
   var bindAddBookmark = function () {
     $("#btn_add_bookmark").click(function () {
       addBookmark();
@@ -471,6 +568,7 @@ var bookmarks = function () {
       bindHeader();
       bindModal();
       bindAddBookmark();
+      bindBtn();
     },
 
     readInitData: function () {
