@@ -59,29 +59,31 @@
     </aside>
 
     <main class="main">
-        <div class="add_bookmark_modal ui modal" style="height: 80%">
+        <div class="add_bookmark_modal ui modal" style="height: 80%"></div>
+
+        <script type="text/x-handlebars-template" id="hbs_add_bookmark_modal">
             <div class="header">
-                Add Bookmark
+                <!--Add Bookmark | Edit Bookmark-->
+                {{menuName}}
             </div>
             <div class="content">
                 <form class="add_bookmark_form ui form">
                     <div class="required field">
                         <label>Url</label>
-                        <input type="text" id="input_url" placeholder="http://www.bookmark.com"/>
+                        <input type="text" id="input_url" placeholder="http://www.bookmark.com" value="{{url}}"/>
                     </div>
                     <div class="field">
                         <label>Description</label>
-                        <input type="text" id="input_desc" placeholder="Bookmark - Web Application"/>
+                        <input type="text" id="input_desc" placeholder="Bookmark - Web Application" value="{{description}}"/>
                     </div>
                     <div class="field">
                         <label>Tags</label>
                         <div class="input_tags_dropdown">
                             <div class="ui fluid multiple search selection dropdown">
-                                <input name="tags" type="hidden" value=""/>
+                                <input name="tags" type="hidden" value="{{#tagsList}}{{uid}}{{#unless @last}},{{/unless}}{{/tagsList}}"/>
                                 <i class="dropdown icon"></i>
                                 <div class="default text">tags</div>
                                 <div class="menu">
-                                    <!-- format -->
                                     <!--<div class="item" data-value="{{uid}}">{{name}}</div>-->
                                 </div>
                             </div>
@@ -91,14 +93,15 @@
             </div>
             <div class="actions" style="margin-top: 180px">
                 <button type="button" id="btn_add_bookmark" class="btn_add_bookmark ui primary left labeled icon button">
-                    Add Bookmark
+                    <!--Add Bookmark | Edit Bookmark-->
+                    {{menuName}}
                     <i class="checkmark icon"></i>
                 </button>
                 <div class="ui black deny button">
                     Cancel
                 </div>
             </div>
-        </div>
+        </script>
 
         <div>
             <button class="btn_modal_add_bookmark ui icon button">

@@ -128,7 +128,7 @@ var bookmarks = function () {
       showBookmarks(data);
 
     }).done(function () {
-      setBookmarksTagsFromCentralTags();
+      setBookmarksTagsFromCentralTags($(".bookmarks_tags_dropdown"));
       bindHbsBookmarks();
 
     }).done(function( ) {
@@ -169,10 +169,10 @@ var bookmarks = function () {
     labelElem.append(addElem);
   };
 
-  var setBookmarksTagsFromCentralTags = function () {
+  var setBookmarksTagsFromCentralTags = function (elem) {
     var menu, centralTagsElem, centralTagsChildElem;
 
-    menu = $(".bookmarks_tags_dropdown").find(".menu");
+    menu = $(elem).find(".menu");
     centralTagsElem = $(".central_tags_list");
     centralTagsChildElem = $(".central_tags_list").children();
 
@@ -299,7 +299,7 @@ var bookmarks = function () {
           return addCentralTagsList(tags);
 
         }).done(function (tags) {
-          setBookmarksTagsFromCentralTags();
+          setBookmarksTagsFromCentralTags($(".bookmarks_tags_dropdown"));
           setBookmarksTagsLabel(elem, tags);
           saveBookmarkTags(bookmarkUid, tags.uid);
         });
@@ -371,7 +371,15 @@ var bookmarks = function () {
       showBookmarkEdit(data);
 
     }).done(function () {
+      setBookmarksTagsFromCentralTags($(".input_tags_dropdown"));
+      bindInputTagsDropdown();
       bindBookmarkEdit();
+    });
+  };
+
+  var bindInputTagsDropdown = function () {
+    $('.input_tags_dropdown > .ui.dropdown').dropdown({
+      allowAdditions: true
     });
   };
 
@@ -382,13 +390,15 @@ var bookmarks = function () {
   };
 
   var showBookmarkEdit = function (data) {
-    var template, html;
+    var template, html, modalElem;
+    data.menuName = "Edit Bookmark";
 
-    template = Handlebars.compile($("#hbs_bookmark_edit").html());
+    template = Handlebars.compile($("#hbs_add_bookmark_modal").html());
     html = template(data);
+    modalElem = $(".add_bookmark_modal");
 
-    $(".modal_detail_content").html(html);
-    $(".modal").show();
+    modalElem.html(html);
+    modalElem.modal('show');
   };
 
   var deleteBookmark = function (elem) {
@@ -475,10 +485,26 @@ var bookmarks = function () {
     });
   };
 
+  var showBookmarkNew = function () {
+    var template, html, modalElem, data;
+
+    data = {
+      menuName : "Add Bookmark"
+    };
+
+    template = Handlebars.compile($("#hbs_add_bookmark_modal").html());
+    html = template(data);
+    modalElem = $(".add_bookmark_modal");
+
+    modalElem.html(html);
+    modalElem.modal('show');
+
+    setInputTagsFromCentralTags();
+  };
+
   var bindBtn = function () {
     $(".btn_modal_add_bookmark").click(function () {
-      $('.add_bookmark_modal').modal('show');
-      setInputTagsFromCentralTags();
+      showBookmarkNew();
     });
 
     $(".btn_edit_read_tags").click(function () {
