@@ -133,7 +133,21 @@ var bookmarks = function () {
 
     }).done(function( ) {
       bindDropdown();
+      bindReadBookmarks();
       $('.table').tablesort();
+    });
+  };
+
+  var bindReadBookmarks = function () {
+    var bookmarkUid;
+
+    $(".btn_modal_delete_bookmark").click(function () {
+      bookmarkUid = $(this).data("bookmarkUid");
+      $('.delete_msg').modal('show');
+    });
+
+    $(".btn_delete_bookmark").click(function () {
+      deleteBookmark(bookmarkUid);
     });
   };
 
@@ -348,10 +362,6 @@ var bookmarks = function () {
     $(".btn_update_bookmark").click(function () {
       modalReadBookmark(this);
     });
-
-    $(".btn_delete_bookmark").click(function () {
-      deleteBookmark(this);
-    });
   };
 
   var clearInputData = function () {
@@ -401,9 +411,7 @@ var bookmarks = function () {
     modalElem.modal('show');
   };
 
-  var deleteBookmark = function (elem) {
-    var bookmarkUid = $(elem).data("bookmarkUid");
-
+  var deleteBookmark = function (bookmarkUid) {
     $.ajax({
       type: "DELETE",
       url: "/api/bookmarks/" + bookmarkUid
@@ -511,9 +519,7 @@ var bookmarks = function () {
       $('.bookmarks_tags_label').toggleClass("hide");
       $('.bookmarks_tags_dropdown').toggleClass("hide");
     });
-  };
 
-  var bindAddBookmark = function () {
     $("#btn_add_bookmark").click(function () {
       addBookmark();
     });
@@ -593,7 +599,6 @@ var bookmarks = function () {
     bind: function () {
       bindHeader();
       bindModal();
-      bindAddBookmark();
       bindBtn();
     },
 

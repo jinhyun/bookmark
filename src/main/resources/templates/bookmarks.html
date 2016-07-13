@@ -58,8 +58,32 @@
         <div class="search_tagsList"></div>
     </aside>
 
+    <!-- TODO: separate modal div -->
+
     <main class="main">
         <div class="add_bookmark_modal ui modal" style="height: 80%"></div>
+
+        <div class="delete_msg ui basic small modal" style="height: 250px;">
+            <div class="ui icon header">
+                <i class="trash icon"></i>
+                Delete Bookmark
+            </div>
+            <div class="content">
+                <p>Are you sure you want to delete it?</p>
+            </div>
+            <div class="actions">
+                <div class="two fluid ui inverted buttons">
+                    <div class="btn_delete_bookmark ui ok green basic inverted button">
+                        <i class="checkmark icon"></i>
+                        Yes
+                    </div>
+                    <div class="ui cancel red basic inverted button">
+                        <i class="remove icon"></i>
+                        No
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script type="text/x-handlebars-template" id="hbs_add_bookmark_modal">
             <div class="header">
@@ -194,7 +218,7 @@
                                 <button class="btn_update_bookmark ui button" data-bookmark-uid="{{uid}}">
                                     <i class="edit icon"></i>
                                 </button>
-                                <button class="btn_delete_bookmark ui button" data-bookmark-uid="{{uid}}">
+                                <button class="btn_modal_delete_bookmark ui button" data-bookmark-uid="{{uid}}">
                                     <i class="remove circle icon"></i>
                                 </button>
                             </div>
