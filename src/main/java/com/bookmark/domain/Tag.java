@@ -5,17 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Tags {
+public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TAGS_UID")
+    @Column(name = "TAG_UID")
     private Long uid;
 
     @Column(name = "NAME")
     private String name;
 
-    @OneToMany(mappedBy = "tags", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<BookmarkTags> bookmarkTags = new ArrayList<>();
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<BookmarkTag> bookmarkTagList = new ArrayList<>();
 
     public Long getUid() {
         return uid;

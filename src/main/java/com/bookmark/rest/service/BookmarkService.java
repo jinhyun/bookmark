@@ -1,8 +1,8 @@
 package com.bookmark.rest.service;
 
 import com.bookmark.domain.Bookmark;
-import com.bookmark.domain.BookmarkTags;
-import com.bookmark.domain.Tags;
+import com.bookmark.domain.BookmarkTag;
+import com.bookmark.domain.Tag;
 import com.bookmark.rest.repository.BookmarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,13 @@ public class BookmarkService {
     private BookmarkRepository bookmarkRepository;
 
     @Autowired
-    private TagsService tagsService;
+    private TagService tagService;
 
     @Autowired
     private LinkService linkService;
 
     public List<Bookmark> getBookmarks() {
-        return bookmarkRepository.findAllWithTags();
+        return bookmarkRepository.findBookmarkListWithTag();
     }
 
     public Bookmark addBookmark(Bookmark inputBookmark) {
@@ -34,33 +34,34 @@ public class BookmarkService {
             inputBookmark.setTitle(linkService.getTitle(inputBookmark.getUrl()));
         }
 
-        if (inputBookmark.getBookmarkTagsList().size() == 0) {
+        if (inputBookmark.getBookmarkTagList().size() == 0) {
             return bookmarkRepository.save(inputBookmark);
 
         } else {
-            List<BookmarkTags> inputBookmarkTagsList = inputBookmark.getBookmarkTagsList();
-            inputBookmark.setBookmarkTagsList(null);
+            List<BookmarkTag> inputBookmarkTagList = inputBookmark.getBookmarkTagList();
+            inputBookmark.setBookmarkTagList(null);
             Bookmark savedBookmark = bookmarkRepository.save(inputBookmark);
 
-            List<BookmarkTags> bookmarkTagsList = new ArrayList<>();
+            List<BookmarkTag> bookmarkTagList = new ArrayList<>();
 
-            for (BookmarkTags inputBookmarkTags : inputBookmarkTagsList) {
-                Tags inputTags = inputBookmarkTags.getTags();
-                Tags resultTags = tagsService.getTagsByName(inputTags.getName());
+            for (BookmarkTag inputBookmarkTag : inputBookmarkTagList) {
+                // TODO: change tagUid
+                Tag inputTag = inputBookmarkTag.getTag();
+                Tag resultTag = tagService.getTagByName(inputTag.getName());
 
-                if (resultTags == null) {
-                    Tags tags = new Tags();
-                    tags.setName(inputTags.getName());
-                    resultTags = tagsService.saveTags(tags);
+                if (resultTag == null) {
+                    Tag tag = new Tag();
+                    tag.setName(inputTag.getName());
+                    resultTag = tagService.saveTag(tag);
                 }
 
-                BookmarkTags bookmarkTags = new BookmarkTags();
-                bookmarkTags.setBookmark(savedBookmark);
-                bookmarkTags.setTags(resultTags);
-                bookmarkTagsList.add(bookmarkTags);
+                BookmarkTag bookmarkTag = new BookmarkTag();
+                bookmarkTag.setBookmark(savedBookmark);
+                bookmarkTag.setTag(resultTag);
+                bookmarkTagList.add(bookmarkTag);
             }
 
-            savedBookmark.setBookmarkTagsList(bookmarkTagsList);
+            savedBookmark.setBookmarkTagList(bookmarkTagList);
 
             return bookmarkRepository.saveAndFlush(savedBookmark);
         }
@@ -82,31 +83,31 @@ public class BookmarkService {
         bookmarkRepository.delete(bookmarkUid);
     }
 
-    public List<Bookmark> findAllBookmarks(String contents) {
+    public List<Bookmark> findBookmarkListByUrlDesc(String contents) {
         String url = contents;
         String description = contents;
         return bookmarkRepository.findByUrlContainingOrDescriptionContaining(url, description);
     }
 
-    public Tags addBookmarkTags(Long bookmarkUid, Tags inputTags) {
+    public Tag addBookmarkTag(Long bookmarkUid, Tag inputTag) {
         Bookmark bookmark = this.getBookmark(bookmarkUid);
-        Tags tags = tagsService.getTags(inputTags.getUid());
+        Tag tag = tagService.getTag(inputTag.getUid());
 
-        BookmarkTags bookmarkTags = new BookmarkTags();
-        bookmarkTags.setBookmark(bookmark);
-        bookmarkTags.setTags(tags);
+        BookmarkTag bookmarkTag = new BookmarkTag();
+        bookmarkTag.setBookmark(bookmark);
+        bookmarkTag.setTag(tag);
 
-        bookmark.getBookmarkTagsList().add(bookmarkTags);
+        bookmark.getBookmarkTagList().add(bookmarkTag);
 
         bookmarkRepository.saveAndFlush(bookmark);
 
-        return tags;
+        return tag;
     }
 
-    public List<Bookmark> findBookmarksByTagsUid(List<Long> tagsUidList) {
-        if (CollectionUtils.isEmpty(tagsUidList)) {
-            return this.findAllBookmarks("");
+    public List<Bookmark> findBookmarksByTagUidList(List<Long> tagUidList) {
+        if (CollectionUtils.isEmpty(tagUidList)) {
+            return this.findBookmarkListByUrlDesc("");
         }
-        return bookmarkRepository.findBookmarksByTagsUid(tagsUidList);
+        return bookmarkRepository.findBookmarkListByTagUidList(tagUidList);
     }
 }

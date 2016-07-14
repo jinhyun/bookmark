@@ -1,9 +1,9 @@
 package com.bookmark.rest.controller;
 
 import com.bookmark.domain.Bookmark;
-import com.bookmark.domain.Tags;
+import com.bookmark.domain.Tag;
 import com.bookmark.rest.service.BookmarkService;
-import com.bookmark.rest.service.BookmarkTagsService;
+import com.bookmark.rest.service.BookmarkTagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +16,10 @@ public class BookmarkRestController {
     private BookmarkService bookmarkService;
 
     @Autowired
-    private BookmarkTagsService bookmarkTagsService;
+    private BookmarkTagService bookmarkTagService;
 
     @GetMapping("/bookmarks")
-    public List<Bookmark> readBookmarks() {
+    public List<Bookmark> readBookmarkList() {
         return bookmarkService.getBookmarks();
     }
 
@@ -34,8 +34,8 @@ public class BookmarkRestController {
     }
 
     @PatchMapping("/bookmarks")
-    public Bookmark modifyBookmark(@RequestBody Bookmark bookmarkInput) {
-        return bookmarkService.modifyBookmark(bookmarkInput);
+    public Bookmark modifyBookmark(@RequestBody Bookmark bookmark) {
+        return bookmarkService.modifyBookmark(bookmark);
     }
 
     @DeleteMapping("/bookmarks/{bookmarkUid}")
@@ -44,22 +44,22 @@ public class BookmarkRestController {
     }
 
     @GetMapping("/search/bookmarks/{contents}")
-    public List<Bookmark> findAllBookmarks(@PathVariable String contents) {
-        return bookmarkService.findAllBookmarks(contents);
+    public List<Bookmark> findBookmarkListByUrlDesc(@PathVariable String contents) {
+        return bookmarkService.findBookmarkListByUrlDesc(contents);
     }
 
     @PostMapping("/bookmarks/{bookmarkUid}/tags")
-    public Tags addBookmarkTags(@PathVariable Long bookmarkUid, @RequestBody Tags tags) {
-        return bookmarkService.addBookmarkTags(bookmarkUid, tags);
+    public Tag addBookmarkTag(@PathVariable Long bookmarkUid, @RequestBody Tag tag) {
+        return bookmarkService.addBookmarkTag(bookmarkUid, tag);
     }
 
-    @DeleteMapping("/bookmarks/{bookmarkUid}/tags/{tagsUid}")
-    public Tags removeBookmarkTags(@PathVariable Long bookmarkUid, @PathVariable Long tagsUid) {
-        return bookmarkTagsService.removeBookmarkTags(bookmarkUid, tagsUid);
+    @DeleteMapping("/bookmarks/{bookmarkUid}/tags/{tagUid}")
+    public Tag removeBookmarkTag(@PathVariable Long bookmarkUid, @PathVariable Long tagUid) {
+        return bookmarkTagService.removeBookmarkTag(bookmarkUid, tagUid);
     }
 
     @PostMapping("/search/bookmarks/tags")
-    public List<Bookmark> findBookmarksByTagsUid(@RequestBody List<Long> tagsUidList) {
-        return bookmarkService.findBookmarksByTagsUid(tagsUidList);
+    public List<Bookmark> findBookmarkListByTagUid(@RequestBody List<Long> tagUidList) {
+        return bookmarkService.findBookmarksByTagUidList(tagUidList);
     }
 }

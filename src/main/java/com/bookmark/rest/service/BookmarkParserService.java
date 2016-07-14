@@ -2,8 +2,8 @@ package com.bookmark.rest.service;
 
 import com.bookmark.domain.Bookmark;
 import com.bookmark.domain.BookmarkParser;
-import com.bookmark.domain.BookmarkTags;
-import com.bookmark.domain.Tags;
+import com.bookmark.domain.BookmarkTag;
+import com.bookmark.domain.Tag;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,7 +26,7 @@ public class BookmarkParserService {
     private static final Logger logger = LoggerFactory.getLogger(BookmarkParserService.class);
 
     @Autowired
-    private TagsService tagsService;
+    private TagService tagService;
 
     @Autowired
     private BookmarkService bookmarkService;
@@ -40,21 +40,21 @@ public class BookmarkParserService {
         List<BookmarkParser> bookmarkParserList = this.parserBookmarkForChrome(doc);
 
         for (String folderName : folderNameList) {
-            Tags tags = new Tags();
-            tags.setName(folderName);
+            Tag tag = new Tag();
+            tag.setName(folderName);
 
-            tagsService.saveTags(tags);
+            tagService.saveTag(tag);
         }
 
         for (BookmarkParser bookmarkParser : bookmarkParserList) {
             List<String> bookmarkFolderNameList = bookmarkParser.getFolderNameList();
-            List<BookmarkTags> bookmarkTagsList = new ArrayList<>();
+            List<BookmarkTag> bookmarkTagList = new ArrayList<>();
 
-            for (String tagsName : bookmarkFolderNameList) {
-                BookmarkTags bookmarkTags = new BookmarkTags();
-                bookmarkTags.setTags(tagsService.getTagsByName(tagsName));
+            for (String tagName : bookmarkFolderNameList) {
+                BookmarkTag bookmarkTag = new BookmarkTag();
+                bookmarkTag.setTag(tagService.getTagByName(tagName));
 
-                bookmarkTagsList.add(bookmarkTags);
+                bookmarkTagList.add(bookmarkTag);
             }
 
             Bookmark bookmark = new Bookmark();
@@ -62,7 +62,7 @@ public class BookmarkParserService {
             bookmark.setTitle(bookmarkParser.getTitle());
             bookmark.setDescription("");
             bookmark.setRegDate(new Date());
-            bookmark.setBookmarkTagsList(bookmarkTagsList);
+            bookmark.setBookmarkTagList(bookmarkTagList);
 
             bookmarkService.addBookmark(bookmark);
         }

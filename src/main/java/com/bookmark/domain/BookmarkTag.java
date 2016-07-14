@@ -3,10 +3,10 @@ package com.bookmark.domain;
 import javax.persistence.*;
 
 @Entity
-public class BookmarkTags {
+public class BookmarkTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "BOOKMARK_TAGS_UID")
+    @Column(name = "BOOKMARK_TAG_UID")
     private Long uid;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -14,8 +14,8 @@ public class BookmarkTags {
     private Bookmark bookmark;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="TAGS_UID")
-    private Tags tags;
+    @JoinColumn(name="TAG_UID")
+    private Tag tag;
 
     public Long getUid() {
         return uid;
@@ -25,12 +25,12 @@ public class BookmarkTags {
         this.uid = uid;
     }
 
-    public Tags getTags() {
-        return tags;
+    public Tag getTag() {
+        return tag;
     }
 
-    public void setTags(Tags tags) {
-        this.tags = tags;
+    public void setTag(Tag tag) {
+        this.tag = tag;
     }
 
     public Bookmark getBookmark() {

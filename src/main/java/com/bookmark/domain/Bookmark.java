@@ -28,23 +28,23 @@ public class Bookmark {
     private Date regDate;
 
     @Transient
-    private List<Tags> tagsList;
+    private List<Tag> tagList;
 
-    public List<Tags> getTagsList() {
-        List<Tags> tagsList = new ArrayList<>();
-        for (BookmarkTags bookmarkTags : bookmarkTagsList) {
-            Tags tags = new Tags();
-            tags.setUid(bookmarkTags.getTags().getUid());
-            tags.setName(bookmarkTags.getTags().getName());
-            tagsList.add(tags);
+    public List<Tag> getTagList() {
+        List<Tag> tagList = new ArrayList<>();
+        for (BookmarkTag bookmarkTag : bookmarkTagList) {
+            Tag tag = new Tag();
+            tag.setUid(bookmarkTag.getTag().getUid());
+            tag.setName(bookmarkTag.getTag().getName());
+            tagList.add(tag);
         }
 
-        return tagsList;
+        return tagList;
     }
 
     @OneToMany(mappedBy = "bookmark", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonBackReference
-    private List<BookmarkTags> bookmarkTagsList = new ArrayList<>();
+    private List<BookmarkTag> bookmarkTagList = new ArrayList<>();
 
     public String getTitle() {
         return title;
@@ -54,12 +54,12 @@ public class Bookmark {
         this.title = title;
     }
 
-    public List<BookmarkTags> getBookmarkTagsList() {
-        return bookmarkTagsList;
+    public List<BookmarkTag> getBookmarkTagList() {
+        return bookmarkTagList;
     }
 
-    public void setBookmarkTagsList(List<BookmarkTags> bookmarkTagsList) {
-        this.bookmarkTagsList = bookmarkTagsList;
+    public void setBookmarkTagList(List<BookmarkTag> bookmarkTagList) {
+        this.bookmarkTagList = bookmarkTagList;
     }
 
     public Long getUid() {

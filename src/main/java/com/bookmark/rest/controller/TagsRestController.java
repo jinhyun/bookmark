@@ -1,7 +1,7 @@
 package com.bookmark.rest.controller;
 
-import com.bookmark.domain.Tags;
-import com.bookmark.rest.service.TagsService;
+import com.bookmark.domain.Tag;
+import com.bookmark.rest.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,15 +11,15 @@ import java.util.List;
 @RequestMapping("/api")
 public class TagsRestController {
     @Autowired
-    private TagsService tagsService;
+    private TagService tagService;
 
     @GetMapping("/tags")
-    public List<Tags> readTags() {
-        return tagsService.getTagsList();
+    public List<Tag> readTagList() {
+        return tagService.getTagList();
     }
 
     @PostMapping("/tags")
-    public Tags createBookmark(@RequestBody Tags tags) {
-        return tagsService.saveTags(tags);
+    public Tag createBookmark(@RequestBody Tag tag) {
+        return tagService.saveTag(tag);
     }
 }
