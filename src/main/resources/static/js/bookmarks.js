@@ -1,175 +1,120 @@
-/*
-   Naming Convention 필요
-    Common
-      단수, 복수
-      ex) tag - tags, bookmark - bookmarks
-
-    Html
-      id, class naming
-        - div, button, form, hbs script, input, input[json, list, value]
-          - in html
-          - in hbs
-
-    Javascript
-      method naming
-        my function pattern
-        - create / add / read / update / delete / remove
-          - 할 경우 elem or value
-            - innerHTML: create ...
-            - append HTML: add ...
-            - remove HTML:
-            - $(elem).val()
-        - call ajax api (crud)
-        - handlebar binding
-        - set/get value: set / get
-        - show modal
-        - bind button, dropdown
-         - in html
-         - in hbs
- */
-
-var Tags = function (uid, name) {
+var Tag = function (uid, name) {
   this.uid = uid;
   this.name = name;
 };
 
 var bookmarks = function () {
-  var readCentralTagsList = function () {
-    $.ajax({
+  var callApiReadBookmarkList = function () {
+    return $.ajax({
       type: "GET",
-      url: "/api/tags"
-
-    }).done(function (tagsList) {
-      setCentralTagsList(tagsList);
-      createDivCentralTagsList(tagsList);
-
-    }).done(function () {
-      createAddBookmarkTaggle();
+      url: "/api/bookmarks"
     });
   };
 
-  var createDivCentralTagsList = function (inputTagsList) {
-    var tagsList, template, html, contentsElem;
-
-    tagsList = { "tagsList" : inputTagsList };
-    template = Handlebars.compile($("#hbs_central_tags_list").html());
-    html = template(tagsList);
-    contentsElem = $(".central_tags_list");
-
-    contentsElem.html(html);
-  };
-
-  var addDivCentralTagsList = function (tags) {
-    var tagsList, template, html, contentsElem;
-
-    tagsList = { "tagsList" : tags };
-    template = Handlebars.compile($("#hbs_central_tags_list").html());
-    html = template(tagsList);
-    contentsElem = $(".central_tags_list");
-    contentsElem.append(html);
-  };
-
-  var setCentralTagsList = function (inputTagsList) {
-    var tagsList = (inputTagsList) ? JSON.stringify(inputTagsList) : "";
-
-    $("#central_tags_list_json").val(tagsList);
-  };
-
-  var addCentralTagsList = function (tags) {
-    var centralTagsList, centralTagsListElem;
-
-    centralTagsList = [];
-    centralTagsListElem = $("#central_tags_list_json");
-
-    if (centralTagsListElem.val()) {
-      centralTagsList = JSON.parse(centralTagsListElem.val());
-    }
-
-    centralTagsList.push(tags);
-    centralTagsListElem.val(JSON.stringify(centralTagsList));
-
-    return tags;
-  };
-
-  var getCentralTagsUidByName = function (inputTagsName) {
-    var centralTagsList, tagsUid, strCentralTagsList;
-
-    strCentralTagsList = $("#central_tags_list_json").val();
-
-    if (!strCentralTagsList) {
-      return "";
-    }
-
-    centralTagsList = JSON.parse(strCentralTagsList);
-
-    for (var i in centralTagsList) {
-      if (centralTagsList[i].name == inputTagsName) {
-        return tagsUid = centralTagsList[i].uid;
-      }
-    }
-
-    return "";
-  };
-
-  // TODO: delete - getCentralTagsUidByName
-  var getCentralTagsByName = function (inputTagsName) {
-    var centralTagsList, tags, strCentralTagsList;
-
-    strCentralTagsList = $("#central_tags_list_json").val();
-
-    if (!strCentralTagsList) {
-      return "";
-    }
-
-    centralTagsList = JSON.parse(strCentralTagsList);
-
-    for (var i in centralTagsList) {
-      if (centralTagsList[i].name == inputTagsName) {
-        return tags = centralTagsList[i];
-      }
-    }
-
-    return "";
-  };
-
-  var getCentralTagsList = function () {
-    var strCentralTagsList, centralTagsListObj, centralTagsList;
-
-    strCentralTagsList = $("#central_tags_list_json").val();
-    centralTagsList = [];
-
-    if (strCentralTagsList) {
-      centralTagsListObj = JSON.parse(strCentralTagsList);
-
-      for (var i in centralTagsListObj){
-        centralTagsList.push(centralTagsListObj[i].name);
-      }
-    }
-
-    return centralTagsList;
-  };
-
-  var readBookmarks = function () {
-    $.ajax({
+  var callApiReadTagList = function () {
+    return $.ajax({
       type: "GET",
-      url: "/api/bookmarks"
+      url: "/api/tags"
+    });
+  };
 
-    }).done(function (data) {
-      showBookmarks(data);
+  var callApiReadTagByName = function (tagName) {
+    return $.ajax({
+      type: "GET",
+      url: "/api/tags/" + tagName
+    });
+  };
+
+  var callApiAddTag = function (tagsName) {
+    var tags = new Tag(null, tagsName);
+
+    return $.ajax({
+      type: "POST",
+      url: "/api/tags",
+      data: JSON.stringify(tags),
+      contentType: "application/json"
+    });
+  };
+
+  var callApiRemoveBookmarkTag = function (bookmarkUid, tagsUid) {
+    return $.ajax({
+      type: "DELETE",
+      url:"/api/bookmarks/" + bookmarkUid + "/tags/" + tagsUid
+    });
+  };
+
+  var callApiAddBookmarkTag = function (bookmarkUid, tagsName) {
+    var tags = new Tag(null, tagsName);
+
+    return $.ajax({
+      type: "POST",
+      url:"/api/bookmarks/" + bookmarkUid + "/tags",
+      data: JSON.stringify(tags),
+      contentType: "application/json"
+    });
+  };
+
+  var callApiReadBookmark = function (bookmarkUid) {
+    return $.ajax({
+      type: "GET",
+      url: "/api/bookmarks/" + bookmarkUid
+    });
+  };
+
+  var callApiRemoveBookmark = function (bookmarkUid) {
+    return $.ajax({
+      type: "DELETE",
+      url: "/api/bookmarks/" + bookmarkUid
+    });
+  };
+
+  var callApiModifyBookmark = function (bookmark) {
+    return $.ajax({
+      type: "PATCH",
+      url: "/api/bookmarks",
+      data: JSON.stringify(bookmark),
+      contentType: "application/json"
+    });
+  };
+
+  var callApiAddBookmark = function (bookmark) {
+    return $.ajax({
+      type: "POST",
+      url: "/api/bookmarks",
+      data: JSON.stringify(bookmark),
+      contentType: "application/json"
+    });
+  };
+
+  var callApiFindBookmarkListByUrlDesc = function (inputSearch) {
+    return $.ajax({
+      type: "GET",
+      url: "/api/search/bookmarks/" + inputSearch
+    });
+  };
+
+  var callApiAddBookmarkFromFile = function (bookmarkFilePath) {
+    return $.ajax({
+      type: "POST",
+      url: "/parser/bookmarks",
+      data: { filePathName: bookmarkFilePath }
+    });
+  };
+
+  var readBookmarkList = function () {
+    $.when(callApiReadBookmarkList(), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
+      showBookmarkList(bookmarkListObj[0], tagListObj[0]);
 
     }).done(function () {
-      setBookmarksTagsFromCentralTags($(".bookmarks_tags_dropdown"));
-
-    }).done(function( ) {
-      bindDropdownInHbs();
-      bindBtnBookmarksInHbs();
+      bindDropdownHbs();
+      bindBtnBookmarksHbs();
       $('.table').tablesort();
     });
   };
 
-  var bindBtnBookmarksInHbs = function () {
+  var bindBtnBookmarksHbs = function () {
     $(".btn_update_bookmark").click(function () {
-      modalReadBookmark(this);
+      showModalBookmarkEdit(this);
     });
 
     $(".btn_modal_delete_bookmark").click(function () {
@@ -178,20 +123,25 @@ var bookmarks = function () {
     });
   };
 
-  var showBookmarks = function (data) {
+  var showBookmarkList = function (bookmarkList, tagList) {
     var bookmarks, template, html, contentsElem;
 
-    bookmarks = { "bookmarks" : data };
-    template = Handlebars.compile($("#hbs_bookmarks").html());
-    html = template(bookmarks);
-    contentsElem = $(".bookmarks");
+    for (var i = 0; i < bookmarkList.length; i++) {
+      bookmarkList[i].menuTagList = tagList;
+    }
 
+    bookmarks = {bookmarks: bookmarkList};
+
+    template = Handlebars.compile($("#hbs_bookmarks").html());
+    Handlebars.registerPartial("menuTag", $("#tag_list_hbs_partial").html());
+    html = template(bookmarks);
+
+    contentsElem = $(".bookmarks");
     contentsElem.html(html);
-    //bookmarksTaggle($(".bookmark_taggle"));
     contentsElem.show();
   };
 
-  var removeBookmarksTagsLabel = function (elem, tagsName) {
+  var removeElemBookmarksTagsLabel = function (elem, tagsName) {
     var labelElem = $(elem).parent().parent().find(".bookmarks_tags_label").children();
 
     for (var i = 0; i < labelElem.length; i++) {
@@ -201,375 +151,254 @@ var bookmarks = function () {
     }
   };
 
-  var setBookmarksTagsLabel = function (elem , tags) {
+  var addElemBookmarksTagsLabel = function (elem , tag) {
     var labelElem, addElem;
 
     labelElem = $(elem).parent().parent().find(".bookmarks_tags_label");
-    addElem = "<div class='ui small label' style='margin-bottom: 5px' data-value='"+tags.uid+"'>"+tags.name+"</div>";
+    addElem = "<div class='ui small label' style='margin-bottom: 5px' data-value='"+tag.uid+"'>"+tag.name+"</div>";
 
     labelElem.append(addElem);
   };
 
-  var setBookmarksTagsFromCentralTags = function (elem) {
-    var menu, centralTagsElem, centralTagsChildElem;
-
-    menu = $(elem).find(".menu");
-    centralTagsElem = $(".central_tags_list");
-    centralTagsChildElem = $(".central_tags_list").children();
-
-    for (var i = 0; i < centralTagsChildElem.length; i++) {
-      $(centralTagsChildElem[i]).addClass("item");
-    }
-
-    for (var j = 0; j < menu.length; j++) {
-      $(menu[j]).html(centralTagsElem.html());
-    }
-  };
-
-  var setInputTagsFromCentralTags = function () {
-    var menu, centralTagsElem;
-
-    menu = $(".input_tags_dropdown").find(".menu");
-    centralTagsElem = $(".central_tags_list");
-
-    for (var j = 0; j < menu.length; j ++) {
-      $(menu[j]).html(centralTagsElem.html());
-    }
-
-    $('.input_tags_dropdown > .ui.dropdown').dropdown({
-      allowAdditions: true
-    });
-  };
-
-  var bindDropdownInHbs = function () {
+  var bindDropdownHbs = function () {
     $('.bookmarks_tags_dropdown > .ui.dropdown').dropdown({
       allowAdditions: true,
 
       onAdd: function(value, text) {
-        addTag(this, text);
+        addTag(this, value, text);
       },
 
-      onRemove: function (value, text) {
-        removeTag(this, text);
-        removeBookmarksTagsLabel(this, text);
+      // issue: 태그를 입력한 후에 바로 삭제시 text와 tagElem 모두 undefined
+      onRemove: function (value, text, tagElem) {
+        removeTag(this, value, tagElem);
       }
     });
   };
 
-  var bookmarksTaggle = function (elem) {
-    elem.tagit({
-      availableTags: getCentralTagsList(),
-      autocomplete: { delay: 0, minLength: 1 },
-      onTagClicked: function(evt, ui) {
-        //console.log("onTagClicked: " + elem.tagit('tagLabel', ui.tag));
-      },
-      afterTagRemoved: function(evt, ui) {
-        //console.log('afterTagRemoved: ' + elem.tagit('tagLabel', ui.tag));
-        removeTag(this, elem.tagit('tagLabel', ui.tag))
-      }
-    });
-  };
+  var appendElemAnotherMenuTag = function (elem, value, text) {
+    var bookmarkUid, bookmarkTagsDropdownElem, menuTagElem;
 
-  var addBookmarkTaggle = function (elem) {
-    elem.tagit({
-      availableTags: getCentralTagsList(),
-      autocomplete: { delay: 0, minLength: 1 }
-    });
-  };
+    bookmarkUid = elem.dataset.bookmarkUid;
+    bookmarkTagsDropdownElem = $('.bookmarks_tags_dropdown');
 
-  var readBookmarksByTagsName = function (selectedTagElem, inputTagsName) {
-    var inputTagsUid, searchTagsUidListElem, strTagsUidList, tagsUidList, toggleElem, isAddTags;
-
-    toggleElem = $(selectedTagElem.tag).toggleClass("checked");
-    searchTagsUidListElem = $("#search_tagsUidList");
-
-    isAddTags = (toggleElem.hasClass("checked")) ? true : false;
-    inputTagsUid = getCentralTagsUidByName(inputTagsName);
-    strTagsUidList = searchTagsUidListElem.val();
-    tagsUidList = [];
-
-    if (strTagsUidList) {
-      tagsUidList = JSON.parse(strTagsUidList);
-    }
-
-    if (isAddTags) {
-      tagsUidList.push(inputTagsUid);
-
-    } else {
-      for (var i = 0; i < tagsUidList.length; i++){
-        if (inputTagsUid == tagsUidList[i]) {
-          tagsUidList.splice([i], 1);
-        }
+    for (var i = 0; i < bookmarkTagsDropdownElem.length; i++) {
+      if (bookmarkUid != bookmarkTagsDropdownElem[i].dataset.bookmarkUid) {
+        menuTagElem = "<div class='item' data-value='"+ value + "'>" + text + "</div>";
+        $(bookmarkTagsDropdownElem[i]).find('.menu').append(menuTagElem);
       }
     }
-
-    searchTagsUidListElem.val(JSON.stringify(tagsUidList));
-
-    $.ajax({
-      type: "POST",
-      url: "/api/search/bookmarks/tags",
-      data: JSON.stringify(tagsUidList),
-      contentType: "application/json"
-
-    }).done(function (data) {
-      showBookmarks(data);
-
-    }).done(function () {
-      bindBtnBookmarksInHbs();
-    });
   };
 
-  var createAddBookmarkTaggle = function () {
-    addBookmarkTaggle($(".add_bookmark_taggle"));
-  };
+  var addTag = function (elem, value, text) {
+    var bookmarkUid;
 
-  var addTag = function (elem, tagsName) {
-    var bookmarkUid, centralTags;
-
-    centralTags = getCentralTagsByName(tagsName);
     bookmarkUid = $(elem).data("bookmarkUid");
 
-    if (centralTags.uid) {
-      saveBookmarkTags(bookmarkUid, centralTags.uid);
-      setBookmarksTagsLabel(elem, centralTags);
-
-    } else {
-      saveTags(tagsName)
-        .done(function (tags) {
-          addDivCentralTagsList(tags);
-          return addCentralTagsList(tags);
-
-        }).done(function (tags) {
-          setBookmarksTagsFromCentralTags($(".bookmarks_tags_dropdown"));
-          setBookmarksTagsLabel(elem, tags);
-          saveBookmarkTags(bookmarkUid, tags.uid);
-        });
-    }
+    callApiAddBookmarkTag(bookmarkUid, text)
+      .done(function (tag) {
+        appendElemAnotherMenuTag(elem, value, text);
+        addElemBookmarksTagsLabel(elem, tag);
+      });
   };
 
-  var removeTag = function (elem, tagName) {
-    var centralTags, bookmarkUid;
+  /*
+   input hidden tag value
+    new tag 는 text
+    saved tag 는 uid
+   */
+  // issue: 태그를 입력한 후에 바로 삭제시 text와 tagElem 모두 undefined
+  var removeTag = function (elem, value, tagElem) {
+    var bookmarkUid, tagName;
 
-    centralTags = getCentralTagsByName(tagName);
     bookmarkUid = $(elem).data("bookmarkUid");
 
-    deleteBookmarkTags(bookmarkUid, centralTags.uid);
+    if (tagElem) {
+      // saved tag
+      tagName = tagElem[0].innerText;
+
+    } else {
+      // new tag
+      tagName = value;
+    }
+
+    callApiReadTagByName(tagName).done(function(tag) {
+      callApiRemoveBookmarkTag(bookmarkUid, tag.uid);
+      removeElemBookmarksTagsLabel(elem, tagName);
+    })
   };
 
-  var saveTags = function (tagsName) {
-    var tags = new Tags(null, tagsName);
-
-    return $.ajax({
-      url:"/api/tags",
-      type: "POST",
-      data: JSON.stringify(tags),
-      contentType: "application/json"
-    });
-  };
-
-  var saveBookmarkTags = function (bookmarkUid, tagsUid) {
-    var tags = new Tags(tagsUid, null);
-
-    return $.ajax({
-      url:"/api/bookmarks/" + bookmarkUid + "/tags",
-      type: "POST",
-      data: JSON.stringify(tags),
-      contentType: "application/json"
-    });
-  };
-
-  var deleteBookmarkTags = function (bookmarkUid, tagsUid) {
-    return $.ajax({
-      url:"/api/bookmarks/" + bookmarkUid + "/tags/" + tagsUid,
-      type: "DELETE"
-    });
-  };
-
-  var clearInputData = function () {
+  var initInputData = function () {
     $("#input_url").val("");
     $("#input_desc").val("");
-    $(".add_bookmark_taggle").tagit("removeAll");
+    $('.input_tags_dropdown > .ui.dropdown').dropdown("clear");
   };
 
-  var modalReadBookmark = function (elem) {
+  var showModalBookmarkEdit = function (elem) {
     var bookmarkUid = $(elem).data("bookmarkUid");
 
-    $.ajax({
-      type: "GET",
-      url: "/api/bookmarks/" + bookmarkUid
+    $.when(callApiReadBookmark(bookmarkUid), callApiReadTagList()).done(function (bookmarkObj, tagListObj){
+      var template, html, modalElem, data;
 
-    }).done(function (data) {
-      showBookmarkEdit(data);
+      data = {
+        addEdit : "Edit",
+        url: bookmarkObj[0].url,
+        description: bookmarkObj[0].description,
+        tagList: bookmarkObj[0].tagList,
+        menuTagList: tagListObj[0]
+      };
 
-    }).done(function () {
-      setBookmarksTagsFromCentralTags($(".input_tags_dropdown"));
-      bindInputTagsDropdownInHbs();
-      bindBookmarkEditInHbs();
+      template = Handlebars.compile($("#hbs_add_bookmark_modal").html());
+      Handlebars.registerPartial("menuTag", $("#tag_list_hbs_partial").html());
+
+      html = template(data);
+      modalElem = $(".add_bookmark_modal");
+
+      modalElem.html(html);
+      modalElem.modal('show');
+
+      bindInputTagsDropdownHbs();
+      $(".btn_edit_bookmark").removeClass("hidden");
+
+      $(".btn_edit_bookmark").click(function () {
+        updateBookmark(bookmarkUid);
+      });
     });
   };
 
-  var bindInputTagsDropdownInHbs = function () {
+  var bindInputTagsDropdownHbs = function () {
     $('.input_tags_dropdown > .ui.dropdown').dropdown({
       allowAdditions: true
     });
   };
 
-  var bindBookmarkEditInHbs = function () {
-    $("#btn_updateBookmark").click(function () {
-      updateBookmark(this);
-    });
-  };
-
-  var showBookmarkEdit = function (data) {
-    var template, html, modalElem;
-    data.addEdit = "Edit";
-
-    template = Handlebars.compile($("#hbs_add_bookmark_modal").html());
-    html = template(data);
-    modalElem = $(".add_bookmark_modal");
-
-    modalElem.html(html);
-    modalElem.modal('show');
-  };
-
   var deleteBookmark = function (bookmarkUid) {
-    $.ajax({
-      type: "DELETE",
-      url: "/api/bookmarks/" + bookmarkUid
-
-    }).done(function () {
-      readBookmarks();
+    callApiRemoveBookmark(bookmarkUid).done(function () {
+      readBookmarkList();
     });
   };
 
-  var updateBookmark = function (el) {
-    var bookmark = {
-      uid: $(el).data("bookmarkUid"),
-      url: $("#input_update_url").val(),
-      description: $("#input_update_desc").val()
-    };
+  var updateBookmark = function (bookmarkUid) {
+    var bookmark = createBookmarkObj();
+    bookmark.uid = bookmarkUid;
 
-    $.ajax({
-      type: "PATCH",
-      url: "/api/bookmarks",
-      data: JSON.stringify(bookmark),
-      contentType: "application/json"
-
-    }).done(function () {
-      $(".modal").hide();
-      readBookmarks();
+    callApiModifyBookmark(bookmark).done(function () {
+      $(".add_bookmark_modal").modal("hide");
+      readBookmarkList();
     });
   };
 
   var createBookmarkObj = function () {
-    var elemList, bookmarkTagsList;
+    var bookmarkTagList, selectedTagListElem;
 
-    elemList = $(".add_bookmark_taggle").find("input[name]");
-    bookmarkTagsList = [];
+    selectedTagListElem = $(".input_tags_dropdown").find("a");
+    bookmarkTagList = [];
 
-    for (var i = 0; i < elemList.length; i++) {
-      var tags, bookmarkTags, tagName;
+    for (var i = 0; i < selectedTagListElem.length; i++) {
+      var bookmarkTag, tagName;
 
-      tagName = $(elemList[i]).val();
-      tags = { name : tagName};
-      bookmarkTags = { tags : tags };
+      tagName = selectedTagListElem[i].innerText;
+      bookmarkTag = {
+        tag: {
+          name: tagName
+        }
+      };
 
-      bookmarkTagsList.push(bookmarkTags);
+      bookmarkTagList.push(bookmarkTag);
     }
 
     return {
       url: $("#input_url").val(),
       description: $("#input_desc").val(),
       regDate: new Date(),
-      bookmarkTagsList: bookmarkTagsList
+      bookmarkTagList: bookmarkTagList
     };
   };
 
   var addBookmark = function () {
     var bookmark = createBookmarkObj();
 
-    $.ajax({
-      type: "POST",
-      url: "/api/bookmarks",
-      data: JSON.stringify(bookmark),
-      contentType: "application/json"
+    callApiAddBookmark(bookmark).done(function() {
+      readBookmarkList();
 
     }).done(function() {
-      readBookmarks();
+      initInputData();
 
-    }).done(function() {
-      clearInputData();
-
-      if (!$(".addEditContinue").is(":checked")) {
+      if (!$(".add_continue").is(":checked")) {
         $(".add_bookmark_modal").modal("hide");
       }
     });
   };
 
-  var showBookmarkNew = function () {
-    var template, html, modalElem, data;
+  var showModalBookmarkNew = function () {
+    callApiReadTagList().done(function (tagList) {
+      var template, html, modalElem, data;
 
-    data = {
-      addEdit : "Add"
-    };
+      data = {
+        addEdit : "Add",
+        menuTagList: tagList
+      };
 
-    template = Handlebars.compile($("#hbs_add_bookmark_modal").html());
-    html = template(data);
-    modalElem = $(".add_bookmark_modal");
+      template = Handlebars.compile($("#hbs_add_bookmark_modal").html());
+      Handlebars.registerPartial("menuTag", $("#tag_list_hbs_partial").html());
+      html = template(data);
+      modalElem = $(".add_bookmark_modal");
 
-    modalElem.html(html);
-    modalElem.modal('show');
+      modalElem.html(html);
+      modalElem.modal('show');
 
-    setInputTagsFromCentralTags();
+      bindInputTagsDropdownHbs();
+      $(".btn_add_continue").removeClass("hidden");
+      $(".btn_add_bookmark").removeClass("hidden");
+
+      $(".btn_add_bookmark").click(function () {
+        addBookmark();
+      });
+    });
   };
 
-  // TODO: refactor readBookmarks()
   var searchBookmark = function () {
     var inputSearch = $("#input_search").val();
 
     if (!inputSearch) {
-      readBookmarks();
+      readBookmarkList();
 
     } else {
-      $.ajax({
-        url: "/api/search/bookmarks/" + inputSearch,
-        type: "GET"
-
-      }).done(function (data) {
-        showBookmarks(data);
+      callApiFindBookmarkListByUrlDesc(inputSearch).done(function (data) {
+        showBookmarkList(data);
 
       }).done(function () {
-        bindBtnBookmarksInHbs();
+        bindBtnBookmarksHbs();
       });
     }
   };
 
-  var modalLoadBookmarkFile = function () {
-    var template, html;
+  var showModalLoadBookmarkFile = function () {
+    var template, html, modalElem;
 
-    template = Handlebars.compile($("#hbs_load_bookmark_file").html());
+    template = Handlebars.compile($("#hbs_import_bookmark_file").html());
     html = template();
 
-    $(".modal_detail_content").html(html);
-    $(".modal").show();
+    modalElem = $(".load_bookmark");
+    modalElem.html(html);
+    modalElem.modal('show');
 
-    $("#btn_load_bookmark_file").click(function () {
+    $(".btn_import_bookmark_file").click(function () {
       loadBookmarkFile();
     });
   };
 
-  var bindBtnInHtml = function () {
+  var bindBtn = function () {
     $("#btn_search_bookmark").click(function () {
-      searchBookmark(bindBtnBookmarksInHbs);
+      searchBookmark(bindBtnBookmarksHbs);
     });
 
     $("#btn_modal_load_bookmark").click(function () {
-      modalLoadBookmarkFile();
+      showModalLoadBookmarkFile();
     });
 
     $(".search_bookmark").keypress(function( event ) {
       if ( event.which == 13 ) {
-        searchBookmark(bindBtnBookmarksInHbs);
+        searchBookmark(bindBtnBookmarksHbs);
       }
     });
 
@@ -588,18 +417,12 @@ var bookmarks = function () {
     };
 
     $(".btn_modal_add_bookmark").click(function () {
-      var t = showBookmarkNew();
-
-      $(t).promise().done(function () {
-        $("#btn_add_bookmark").click(function () {
-          addBookmark();
-        });
-      });
+      showModalBookmarkNew();
     });
 
     $(".btn_edit_read_tags").click(function () {
-      $('.bookmarks_tags_label').toggleClass("hide");
-      $('.bookmarks_tags_dropdown').toggleClass("hide");
+      $('.bookmarks_tags_label').toggleClass("hidden");
+      $('.bookmarks_tags_dropdown').toggleClass("hidden");
     });
 
     $(".btn_delete_bookmark").click(function () {
@@ -610,26 +433,20 @@ var bookmarks = function () {
   var loadBookmarkFile = function () {
     var bookmarkFilePath = $("#bookmark_file_path").val();
 
-    $.ajax({
-      type: "POST",
-      url: "/parser/bookmarks",
-      data: { filePathName: bookmarkFilePath }
-
-    }).done(function (data) {
+    callApiAddBookmarkFromFile(bookmarkFilePath).done(function (data) {
       alert(data);
-      $(".modal").hide();
-      readBookmarks();
+      $(".load_bookmark").modal('hide');
+      readBookmarkList();
     });
   };
 
   return {
     bind: function () {
-      bindBtnInHtml();
+      bindBtn();
     },
 
     readInitData: function () {
-      readCentralTagsList();
-      readBookmarks();
+      readBookmarkList();
     }
   }
 }();

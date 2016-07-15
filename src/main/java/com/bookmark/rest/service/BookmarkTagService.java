@@ -33,4 +33,8 @@ public class BookmarkTagService {
 
         return tag;
     }
+
+    public void deleteBookmarkTag(Long uid) {
+        bookmarkTagRepository.delete(uid);
+    }
 }

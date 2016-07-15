@@ -43,18 +43,17 @@
 
     <div class="hidden_common_data">
         <input type="hidden" id="central_tags_list_json" size="150"/>
-        <div class="hide central_tags_list"></div>
+        <div class="hidden central_tags_list"></div>
     </div>
 
     <script type="text/x-handlebars-template" id="hbs_central_tags_list">
-        {{#tagsList}}
+        {{#tagList}}
             <div data-value="{{uid}}">{{name}}</div>
-        {{/tagsList}}
+        {{/tagList}}
     </script>
 
     <aside class="tags">
         <input type="hidden" id="search_tagsUidList"/>
-        <!--<ul class="search_tagsList_taggle"></ul>-->
         <div class="search_tagsList"></div>
     </aside>
 
@@ -62,6 +61,7 @@
 
     <main class="main">
         <div class="add_bookmark_modal ui modal" style="height: 80%"></div>
+        <div class="load_bookmark ui modal" style="height: 30%"></div>
 
         <div class="delete_msg ui basic small modal" style="height: 250px;">
             <div class="ui icon header">
@@ -135,12 +135,13 @@
                 <div class="field">
                     <div class="input_tags_dropdown">
                         <div class="ui fluid multiple search selection dropdown">
-                            <input name="tags" type="hidden" value="{{#tagsList}}{{uid}}{{#unless @last}},{{/unless}}{{/tagsList}}"/>
+                            <input name="tags" type="hidden" value="{{#tagList}}{{uid}}{{#unless @last}},{{/unless}}{{/tagList}}"/>
                             <i class="dropdown icon"></i>
                             <div class="default text">Tags</div>
                             <div class="menu">
-                                <!-- format -->
-                                <!-- <div class="item" data-value="{{uid}}">{{name}}</div> -->
+                                {{#each menuTagList}}
+                                    {{>menuTag}}
+                                {{/each}}
                             </div>
                         </div>
                     </div>
@@ -148,14 +149,18 @@
             </form>
         </div>
         <div class="actions" style="margin-top: 180px">
-            <div class="ui toggle checkbox">
-                <input type="checkbox" id="addEditContinue" class="addEditContinue"/>
-                <label for="addEditContinue">{{addEdit}} Continue</label>
+            <div class="btn_add_continue ui toggle checkbox hidden">
+                <input type="checkbox" id="add_continue" class="add_continue"/>
+                <label for="add_continue">add Continue</label>
             </div>
 
-            <div id="btn_add_bookmark" class="btn_add_bookmark ui primary left labeled icon button">
-                <!--Add | Edit -->
-                {{addEdit}} Bookmark
+            <div class="btn_add_bookmark ui primary left labeled icon button hidden">
+                Add Bookmark
+                <i class="checkmark icon"></i>
+            </div>
+
+            <div class="btn_edit_bookmark ui primary left labeled icon button hidden">
+                Edit Bookmark
                 <i class="checkmark icon"></i>
             </div>
 
@@ -165,11 +170,31 @@
         </div>
     </script>
 
-    <script type="text/x-handlebars-template" id="hbs_load_bookmark_file">
-        <div>
-            <!-- ex: /Users/Jinhyun/Downloads/fastwork/bookmark_chrome_simple.html  -->
-            <input type="text" id="bookmark_file_path" placeholder="크롬 북마크 파일 경로를 입력하세요" size="80"/>
-            <button type="button" id="btn_load_bookmark_file">북마크 가져오기</button>
+    <script type="text/x-handlebars-template" id="hbs_import_bookmark_file">
+        <i class="close icon"></i>
+        <div class="header">
+            Import Bookmark
+        </div>
+        <div class="content">
+            <form class="ui form">
+                <div class="field">
+                    <div class="ui labeled input">
+                        <div class="ui label">Path</div>
+                        <!-- ex: /Users/Jinhyun/Downloads/fastwork/bookmark_chrome_simple.html  -->
+                        <input type="text" id="bookmark_file_path" placeholder="크롬 북마크 파일 경로를 입력하세요" size="80"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="actions" style="margin-top: 30px">
+            <div class="btn_import_bookmark_file ui primary left labeled icon button">
+                Import Bookmark
+                <i class="checkmark icon"></i>
+            </div>
+
+            <div class="ui black deny button">
+                Cancel
+            </div>
         </div>
     </script>
 
@@ -179,6 +204,10 @@
             <span> desc: </span><input type="text" id="input_update_desc" value="{{description}}"/>
             <button type="button" id="btn_updateBookmark" data-bookmark-uid="{{uid}}">update</button>
         </div>
+    </script>
+
+    <script type="text/x-handlebars-template" id="tag_list_hbs_partial">
+        <div class="item" data-value="{{uid}}">{{name}}</div>
     </script>
 
     <script type="text/x-handlebars-template" id="hbs_bookmarks">
@@ -208,18 +237,19 @@
                         </td>
                         <td>
                             <div class="bookmarks_tags_label">
-                                {{#tagsList}}
+                                {{#tagList}}
                                     <div class="ui small label" data-value="{{uid}}">{{name}}</div>
-                                {{/tagsList}}
+                                {{/tagList}}
                             </div>
-                            <div class="bookmarks_tags_dropdown hide">
+                            <div class="bookmarks_tags_dropdown hidden" data-bookmark-uid="{{uid}}">
                                 <div class="ui fluid multiple search selection mini dropdown" data-bookmark-uid="{{uid}}">
-                                    <input name="tags" type="hidden" value="{{#tagsList}}{{uid}}{{#unless @last}},{{/unless}}{{/tagsList}}"/>
+                                    <input name="tags" class="tags" type="hidden" value="{{#tagList}}{{uid}}{{#unless @last}},{{/unless}}{{/tagList}}"/>
                                     <i class="dropdown icon"></i>
                                     <div class="default text">tags</div>
                                     <div class="menu">
-                                        <!-- format -->
-                                        <!--<div class="item" data-value="{{uid}}">{{name}}</div>-->
+                                        {{#each menuTagList}}
+                                            {{>menuTag}}
+                                        {{/each}}
                                     </div>
                                 </div>
                             </div>

@@ -18,8 +18,13 @@ public class TagsRestController {
         return tagService.getTagList();
     }
 
+    @GetMapping("/tags/{tagName}")
+    public Tag readTagByName(@PathVariable("tagName") String tagName) {
+        return tagService.getTagByName(tagName);
+    }
+
     @PostMapping("/tags")
-    public Tag createBookmark(@RequestBody Tag tag) {
+    public Tag addTag(@RequestBody Tag tag) {
         return tagService.saveTag(tag);
     }
 }
