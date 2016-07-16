@@ -141,6 +141,6 @@ public class BookmarkService {
             return this.findBookmarkListByUrlDesc("");
         }
 
-        return bookmarkRepository.findBookmarkListByTagUidList(tagUidList);
+        return bookmarkRepository.findBookmarkListByTagUidList(tagUidList, new Long(tagUidList.size() - 1));
     }
 }

@@ -46,16 +46,20 @@
         <div class="hidden central_tags_list"></div>
     </div>
 
-    <script type="text/x-handlebars-template" id="hbs_central_tags_list">
+    <aside class="search_tag_list">
+        <div class="ui fluid multiple search selection mini dropdown">
+            <input name="tags" class="tags" type="hidden"/>
+            <i class="dropdown icon"></i>
+            <div class="default text">Search Tag</div>
+            <div class="menu"></div>
+        </div>
+    </aside>
+
+    <script type="text/x-handlebars-template" id="search_tag_list_hbs_template">
         {{#tagList}}
-            <div data-value="{{uid}}">{{name}}</div>
+            <div class="item" data-value="{{uid}}">{{name}}</div>
         {{/tagList}}
     </script>
-
-    <aside class="tags">
-        <input type="hidden" id="search_tagsUidList"/>
-        <div class="search_tagsList"></div>
-    </aside>
 
     <!-- TODO: separate modal div -->
 

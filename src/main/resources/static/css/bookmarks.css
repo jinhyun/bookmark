@@ -19,7 +19,7 @@ header[role="banner"]{
     margin-bottom: 5px;
 }
 
-.tags {
+.search_tag_list {
     clear: both;
     float: left;
     /*width: 250px;*/

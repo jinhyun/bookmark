@@ -101,7 +101,46 @@ var bookmarks = function () {
     });
   };
 
+  var callApiFindBookmarkListByTagUid = function (tagUidList) {
+    return $.ajax({
+      type: "POST",
+      url: "/api/search/bookmarks/tags",
+      data: JSON.stringify(tagUidList),
+      contentType: "application/json"
+    });
+  };
+
+  var searchReadTagList = function () {
+    callApiReadTagList().done(function (data) {
+      var template, tagList, html, contentsElem;
+
+      tagList = { tagList: data };
+
+      template = Handlebars.compile($("#search_tag_list_hbs_template").html());
+      html = template(tagList);
+      contentsElem = $("aside.search_tag_list").find(".menu");
+      contentsElem.html(html);
+
+      $("aside.search_tag_list > .ui.dropdown").dropdown({
+        onChange: function (value, text, a){
+          var tagUidList = (value) ? value.split(",") : [];
+
+          // TODO: refactor setA
+          $.when(callApiFindBookmarkListByTagUid(tagUidList), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
+            showBookmarkList(bookmarkListObj[0], tagListObj[0]);
+
+          }).done(function () {
+            bindDropdownHbs();
+            bindBtnBookmarksHbs();
+            $('.table').tablesort();
+          });
+        }
+      });
+    });
+  };
+
   var readBookmarkList = function () {
+    // TODO: refactor setA
     $.when(callApiReadBookmarkList(), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
       showBookmarkList(bookmarkListObj[0], tagListObj[0]);
 
@@ -236,6 +275,7 @@ var bookmarks = function () {
   var showModalBookmarkEdit = function (elem) {
     var bookmarkUid = $(elem).data("bookmarkUid");
 
+    // TODO: refactor setA
     $.when(callApiReadBookmark(bookmarkUid), callApiReadTagList()).done(function (bookmarkObj, tagListObj){
       var template, html, modalElem, data;
 
@@ -363,11 +403,14 @@ var bookmarks = function () {
       readBookmarkList();
 
     } else {
-      callApiFindBookmarkListByUrlDesc(inputSearch).done(function (data) {
-        showBookmarkList(data);
+      // TODO: refactor setA
+      $.when(callApiFindBookmarkListByUrlDesc(inputSearch), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
+        showBookmarkList(bookmarkListObj[0], tagListObj[0]);
 
       }).done(function () {
+        bindDropdownHbs();
         bindBtnBookmarksHbs();
+        $('.table').tablesort();
       });
     }
   };
@@ -389,7 +432,7 @@ var bookmarks = function () {
 
   var bindBtn = function () {
     $("#btn_search_bookmark").click(function () {
-      searchBookmark(bindBtnBookmarksHbs);
+      searchBookmark();
     });
 
     $("#btn_modal_load_bookmark").click(function () {
@@ -398,7 +441,7 @@ var bookmarks = function () {
 
     $(".search_bookmark").keypress(function( event ) {
       if ( event.which == 13 ) {
-        searchBookmark(bindBtnBookmarksHbs);
+        searchBookmark();
       }
     });
 
@@ -447,6 +490,7 @@ var bookmarks = function () {
 
     readInitData: function () {
       readBookmarkList();
+      searchReadTagList();
     }
   }
 }();
