@@ -114,7 +114,8 @@ public class BookmarkService {
     public List<Bookmark> findBookmarkListByUrlDesc(String contents) {
         String url = contents;
         String description = contents;
-        return bookmarkRepository.findByUrlContainingOrDescriptionContaining(url, description);
+        String title = contents;
+        return bookmarkRepository.findByUrlContainingOrDescriptionContainingOrTitleContaining(url, description, title);
     }
 
     public Tag addBookmarkTag(Long bookmarkUid, Tag inputTag) {

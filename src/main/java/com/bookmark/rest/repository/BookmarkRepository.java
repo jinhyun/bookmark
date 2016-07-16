@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BookmarkRepository extends JpaRepository <Bookmark, Long> {
-    List<Bookmark> findByUrlContainingOrDescriptionContaining(String url, String description);
+    List<Bookmark> findByUrlContainingOrDescriptionContainingOrTitleContaining(String url, String description, String title);
 
     @Query("select b from Bookmark b left outer join b.bookmarkTagList t group by b.uid")
     List<Bookmark> findBookmarkListWithTag();
