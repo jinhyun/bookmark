@@ -4,6 +4,27 @@ var Tag = function (uid, name) {
 };
 
 var bookmarks = function () {
+  var callApiFindBookmarkListByUrlDescTitleTagUidList = function (val, tagUidList) {
+    return $.ajax({
+      type: "GET",
+      url: "/api/search/bookmarks/contents/" + val + "/tags/" + tagUidList
+    });
+  };
+
+  var callApiFindBookmarkListByUrlDescTitle = function (val) {
+    return $.ajax({
+      type: "GET",
+      url: "/api/search/bookmarks/contents/" + val
+    });
+  };
+
+  var callApiFindBookmarkListByTagUidList = function (tagUidList) {
+    return $.ajax({
+      type: "GET",
+      url: "/api/search/bookmarks/tags/" + tagUidList
+    });
+  };
+
   var callApiReadBookmarkList = function () {
     return $.ajax({
       type: "GET",
@@ -86,13 +107,6 @@ var bookmarks = function () {
     });
   };
 
-  var callApiFindBookmarkListByUrlDesc = function (inputSearch) {
-    return $.ajax({
-      type: "GET",
-      url: "/api/search/bookmarks/" + inputSearch
-    });
-  };
-
   var callApiAddBookmarkFromFile = function (bookmarkFilePath) {
     return $.ajax({
       type: "POST",
@@ -101,13 +115,24 @@ var bookmarks = function () {
     });
   };
 
-  var callApiFindBookmarkListByTagUid = function (tagUidList) {
-    return $.ajax({
-      type: "POST",
-      url: "/api/search/bookmarks/tags",
-      data: JSON.stringify(tagUidList),
-      contentType: "application/json"
-    });
+  var callApiSearchType = function () {
+    var tagUidList, searchContents;
+
+    searchContents = $("#input_search").val();
+    tagUidList = $("aside.search_tag_list").find(".tags").val();
+
+    if (tagUidList && searchContents) {
+      return callApiFindBookmarkListByUrlDescTitleTagUidList(searchContents, tagUidList);
+
+    } else if (tagUidList) {
+      return callApiFindBookmarkListByTagUidList(tagUidList);
+
+    } else if (searchContents) {
+      return callApiFindBookmarkListByUrlDescTitle(searchContents);
+
+    } else {
+      return callApiReadBookmarkList();
+    }
   };
 
   var searchReadTagList = function () {
@@ -122,11 +147,9 @@ var bookmarks = function () {
       contentsElem.html(html);
 
       $("aside.search_tag_list > .ui.dropdown").dropdown({
-        onChange: function (value, text, a){
-          var tagUidList = (value) ? value.split(",") : [];
-
+        onChange: function (value, text, elem){
           // TODO: refactor setA
-          $.when(callApiFindBookmarkListByTagUid(tagUidList), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
+          $.when(callApiSearchType(), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
             showBookmarkList(bookmarkListObj[0], tagListObj[0]);
 
           }).done(function () {
@@ -397,22 +420,16 @@ var bookmarks = function () {
   };
 
   var searchBookmark = function () {
-    var inputSearch = $("#input_search").val();
+    // TODO: refactor setA
+    $.when(callApiSearchType(), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
+      showBookmarkList(bookmarkListObj[0], tagListObj[0]);
 
-    if (!inputSearch) {
-      readBookmarkList();
-
-    } else {
-      // TODO: refactor setA
-      $.when(callApiFindBookmarkListByUrlDesc(inputSearch), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
-        showBookmarkList(bookmarkListObj[0], tagListObj[0]);
-
-      }).done(function () {
-        bindDropdownHbs();
-        bindBtnBookmarksHbs();
-        $('.table').tablesort();
-      });
-    }
+    }).done(function () {
+      bindDropdownHbs();
+      bindBtnBookmarksHbs();
+      $('.table').tablesort();
+    });
+    //}
   };
 
   var showModalLoadBookmarkFile = function () {

@@ -43,9 +43,19 @@ public class BookmarkRestController {
         bookmarkService.removeBookmark(bookmarkUid);
     }
 
-    @GetMapping("/search/bookmarks/{contents}")
-    public List<Bookmark> findBookmarkListByUrlDesc(@PathVariable String contents) {
-        return bookmarkService.findBookmarkListByUrlDesc(contents);
+    @GetMapping(value = "/search/bookmarks/contents/{contents}/tags/{tagUidList}")
+    public List<Bookmark> findBookmarkListByUrlDescTitleTagUidList(@PathVariable("contents") String contents, @PathVariable("tagUidList") List<Long> tagUidList) {
+        return bookmarkService.findBookmarkListByUrlDescTitleTagUidList(contents, tagUidList);
+    }
+
+    @GetMapping("/search/bookmarks/contents/{contents}")
+    public List<Bookmark> findBookmarkListByUrlDescTitle(@PathVariable("contents") String contents) {
+        return bookmarkService.findBookmarkListByUrlDescTitle(contents);
+    }
+
+    @GetMapping(value = "/search/bookmarks/tags/{tagUidList}")
+    public List<Bookmark> findBookmarkListByTagUidList(@PathVariable("tagUidList") List<Long> tagUidList) {
+        return bookmarkService.findBookmarkListByTagUidList(tagUidList);
     }
 
     @PostMapping("/bookmarks/{bookmarkUid}/tags")
@@ -56,10 +66,5 @@ public class BookmarkRestController {
     @DeleteMapping("/bookmarks/{bookmarkUid}/tags/{tagUid}")
     public Tag removeBookmarkTag(@PathVariable Long bookmarkUid, @PathVariable Long tagUid) {
         return bookmarkTagService.removeBookmarkTag(bookmarkUid, tagUid);
-    }
-
-    @PostMapping("/search/bookmarks/tags")
-    public List<Bookmark> findBookmarkListByTagUid(@RequestBody List<Long> tagUidList) {
-        return bookmarkService.findBookmarksByTagUidList(tagUidList);
     }
 }

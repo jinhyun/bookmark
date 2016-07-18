@@ -111,13 +111,6 @@ public class BookmarkService {
         bookmarkRepository.delete(bookmarkUid);
     }
 
-    public List<Bookmark> findBookmarkListByUrlDesc(String contents) {
-        String url = contents;
-        String description = contents;
-        String title = contents;
-        return bookmarkRepository.findByUrlContainingOrDescriptionContainingOrTitleContaining(url, description, title);
-    }
-
     public Tag addBookmarkTag(Long bookmarkUid, Tag inputTag) {
         Bookmark bookmark = this.getBookmark(bookmarkUid);
         Tag tag = tagService.getTagByName(inputTag.getName());
@@ -137,11 +130,17 @@ public class BookmarkService {
         return tag;
     }
 
-    public List<Bookmark> findBookmarksByTagUidList(List<Long> tagUidList) {
-        if (CollectionUtils.isEmpty(tagUidList)) {
-            return this.findBookmarkListByUrlDesc("");
-        }
+    public List<Bookmark> findBookmarkListByUrlDescTitle(String contents) {
+        return bookmarkRepository.findByUrlContainingOrDescriptionContainingOrTitleContaining(contents, contents, contents);
+    }
 
+    public List<Bookmark> findBookmarkListByTagUidList(List<Long> tagUidList) {
         return bookmarkRepository.findBookmarkListByTagUidList(tagUidList, new Long(tagUidList.size() - 1));
+    }
+
+    public List<Bookmark> findBookmarkListByUrlDescTitleTagUidList(String contents, List<Long> tagUidList) {
+        Long tagUidListCnt = (long) (tagUidList.size() - 1);
+
+        return bookmarkRepository.findBookmarkListByUrlDescTitleTagUidList(contents, contents, contents, tagUidList, tagUidListCnt);
     }
 }
