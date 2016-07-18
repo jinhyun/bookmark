@@ -419,6 +419,16 @@ var bookmarks = function () {
     });
   };
 
+  var searchKeyup = function () {
+    var timer;
+    $("#input_search").keyup(function() {
+      clearTimeout(timer);
+      timer = setTimeout(function() {
+        searchBookmark();
+      }, 200);
+    });
+  };
+
   var searchBookmark = function () {
     // TODO: refactor setA
     $.when(callApiSearchType(), callApiReadTagList()).done(function (bookmarkListObj, tagListObj){
@@ -464,6 +474,7 @@ var bookmarks = function () {
 
     $(".input_search_delete").click(function () {
       $("#input_search").val("");
+      searchBookmark();
     });
 
     $(".modal_close").click (function () {
@@ -508,6 +519,7 @@ var bookmarks = function () {
     readInitData: function () {
       readBookmarkList();
       searchReadTagList();
+      searchKeyup();
     }
   }
 }();
